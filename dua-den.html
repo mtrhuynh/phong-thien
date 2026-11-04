@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.6 -->
+    <!-- build v0.7 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -117,7 +117,12 @@
       </div>
 
       <div class="card">
-        <h2>🎵 Nhạc thiền — vừa xem đua vừa nghe</h2>
+        <h2>🎵 Nhạc thiền &amp; cổ vũ — vừa xem đua vừa nghe</h2>
+        <div class="row">
+          <button class="btn" id="cheerBtn">👏 Vỗ tay reo hò cổ vũ!</button>
+          <span class="status">Tiếng cổ vũ cũng tự vang lên khi đua bắt đầu và khi có đèn về nhất.</span>
+        </div>
+        <audio id="cheerAudio" src="music/votay.mp3" preload="auto"></audio>
         <div class="mtracks" id="musicGrid"></div>
         <div class="row">
           <button class="btn ghost" id="musicStop">⏹ Tắt nhạc</button>
@@ -256,6 +261,7 @@
         var post = $("post-" + r.gate.key); if (post) post.classList.add("lit");
         feed("🏁 Đèn của <b>" + esc(r.name) + "</b> về đích thứ " + r.rank + " — cổng " + r.gate.icon + " " + esc(r.gate.label) +
              " · rút được <b>quẻ số " + r.que.so_que + "</b> · " + capWord(r.que.cap) + ".");
+        if (r.rank === 1) cheer();
         if (r.isMe) { myResult = r; bell(); }
         if (isLast) endRace();
         else $("raceStatus").textContent = "Đã có " + finishedCount + "/5 đèn về đích…";
@@ -319,6 +325,7 @@
         $("startBtn").disabled = true; $("joinBtn").disabled = true;
         $("raceStatus").textContent = "Đang đua… gió nước khó lường, cứ thong thả xem.";
         feed("🏁 Cuộc đua bắt đầu! 5 đèn rời vạch xuất phát.");
+        cheer();
         rafId = requestAnimationFrame(step);
       };
       $("resetBtn").onclick = function () {
@@ -331,6 +338,11 @@
         feed("↺ Sẵn sàng cho lượt đua mới.");
       };
 
+      function cheer() {
+        var a = $("cheerAudio");
+        try { a.currentTime = 0; a.volume = 0.85; var p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+      }
+      $("cheerBtn").onclick = cheer;
       var TRACKS = [
         ["thien.mp3", "🎵 Nhạc thiền không lời"], ["mua.mp3", "🌧️ Mưa & sấm xa"],
         ["chim.mp3", "🐦 Chim rừng buổi sớm"], ["karma.mp3", "🧘 Meditation Karma"],
