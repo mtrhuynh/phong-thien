@@ -31,9 +31,9 @@
       .status { color: #ffdf8a; font-size: 14px; min-height: 20px; }
       .scene { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid #263650; }
       .scene > img { display: block; width: 100%; height: auto; }
-      .finish { position: absolute; left: 90.5%; top: 40.5%; height: 31%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
-      .finish span { position: absolute; top: -20px; left: -12px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
-      .gatepost { position: absolute; left: 92.3%; transform: translate(-50%,-50%); width: 27px; height: 27px; line-height: 27px; text-align: center; font-size: 14px; background: rgba(10,16,26,.68); border: 1px solid #4a3a16; border-radius: 50%; opacity: .6; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
+      .finish { position: absolute; left: 90%; top: 4%; bottom: 4%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
+      .finish span { position: absolute; top: 2px; left: 6px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
+      .gatepost { position: absolute; left: 91.2%; transform: translateY(-50%); font-size: 11px; background: rgba(10,16,26,.72); border: 1px solid #4a3a16; color: #ffe1a1; border-radius: 999px; padding: 2px 8px; white-space: nowrap; opacity: .55; }
       .gatepost.lit { opacity: 1; border-color: #ffd66e; box-shadow: 0 0 12px rgba(255,200,80,.65); color: #fff0cd; }
       .lanes { position: absolute; inset: 0; }
       .rlan { position: absolute; width: 54px; transform: translate(-50%,-50%); text-align: center; transition: none; }
@@ -128,8 +128,7 @@
         { name: "Cô Tư", face: "👩" }, { name: "Chú Bảy", face: "👨" },
         { name: "Bà Tám", face: "👵" }, { name: "Ông Chín", face: "👴" }
       ];
-      var LANES = [44.5, 51, 57.5, 64, 70.5];
-      var SCALES = [0.72, 0.85, 0.98, 1.1, 1.22];
+      var LANES = [15, 32.5, 50, 67.5, 85];
       var XAM = null, POOLS = null;
       var myGate = GATES[3];
       var racers = [], racing = false, finishedCount = 0, rafId = null, lastTs = 0, gustTimer = 0, myResult = null;
@@ -179,8 +178,8 @@
       GATES.forEach(function (g, i) {
         var d = document.createElement("div");
         d.className = "gatepost"; d.id = "post-" + g.key;
-        d.style.top = [42.5, 49, 55.5, 62, 68.5][i] + "%";
-        d.textContent = g.icon; d.title = g.label;
+        d.style.top = (10 + i * 20) + "%";
+        d.textContent = g.icon + " " + g.label;
         $("posts").appendChild(d);
       });
       $("nameIn").value = localStorage.getItem("pt_name") || "";
@@ -192,7 +191,7 @@
       function renderRacer(r) {
         var d = document.createElement("div");
         d.className = "rlan" + (r.isMe ? " me" : "");
-        d.style.left = "5%"; d.style.top = LANES[r.lane] + "%"; d.style.width = (54 * SCALES[r.lane]) + "px";
+        d.style.left = "5%"; d.style.top = LANES[r.lane] + "%";
         d.innerHTML = LANTERN_SVG + '<span class="gatebadge">' + r.gate.icon + "</span>" +
           '<span class="tag">' + esc(r.name) + "</span>";
         $("lanes").appendChild(d);
@@ -294,7 +293,7 @@
           var boost = ts < r.boostUntil ? 1.9 : 1;
           r.p += r.base * wind * boost * dt;
           if (r.p >= 1) { r.p = 1; finishRacer(r, ts); }
-          r.el.style.left = (5 + r.p * 85.5) + "%";
+          r.el.style.left = (5 + r.p * 85) + "%";
           r.el.style.top = (LANES[r.lane] + Math.sin(t * 1.4 + r.phase) * 0.35) + "%";
         });
         if (racing) rafId = requestAnimationFrame(step);
