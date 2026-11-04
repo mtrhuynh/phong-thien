@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.5 -->
+    <!-- build v0.5.1 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -39,7 +39,7 @@
       .lanes { position: absolute; inset: 0; }
       .rlan { position: absolute; width: 54px; transform: translate(-50%,-50%); text-align: center; transition: none; }
       .rlan svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 4px 10px rgba(255,170,40,.35)); }
-      .rlan .tag { display: inline-block; margin-top: 1px; font-size: 11px; background: rgba(10,16,26,.78); border-radius: 999px; padding: 1px 8px; color: #ffe9bd; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+      .rlan .tag { position: absolute; left: calc(100% + 7px); top: 50%; transform: translateY(-50%); font-size: 11.5px; font-weight: 700; background: rgba(10,16,26,.82); border-radius: 999px; padding: 2px 9px; color: #ffe9bd; white-space: nowrap; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
       .rlan.me svg { filter: drop-shadow(0 0 12px rgba(255,210,90,.95)); }
       .rlan .gatebadge { position: absolute; top: -8px; right: -6px; font-size: 14px; background: rgba(10,16,26,.85); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; }
       .banner { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(10,16,26,.85); border: 1px solid #f2b64b; color: #ffe1a1; border-radius: 999px; padding: 6px 16px; font-size: 14px; display: none; white-space: nowrap; }
@@ -194,8 +194,7 @@
         var d = document.createElement("div");
         d.className = "rlan" + (r.isMe ? " me" : "");
         d.style.left = "5%"; d.style.top = LANES[r.lane] + "%"; d.style.width = (54 * SCALES[r.lane]) + "px";
-        d.innerHTML = LANTERN_SVG + '<span class="gatebadge">' + r.gate.icon + "</span>" +
-          '<span class="tag">' + esc(r.name) + "</span>";
+        d.innerHTML = LANTERN_SVG + '<span class="tag">' + r.gate.icon + " " + esc(r.name) + "</span>";
         $("lanes").appendChild(d);
         r.el = d;
       }
