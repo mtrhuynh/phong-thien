@@ -30,16 +30,16 @@
       .incenseFx .smoke.s3 { left: 17px; animation-delay: -3.6s; }
       @keyframes rise2 { from { transform: translateX(-57%) translateY(7px) scaleX(1); opacity: .75; } to { transform: translateX(-43%) translateY(-11px) scaleX(1.2); opacity: 1; } }
       .mbtn.on { background: #d4a24a; color: #1a1405; border-color: transparent; }
-      .spot { position: absolute; width: 58px; height: 38px; transform: translate(-50%,-50%); border-radius: 50%; border: 1.5px dashed rgba(255,233,163,.35); background: rgba(255,233,163,.06); cursor: pointer; padding: 0; }
+      .spot { position: absolute; width: 12.5%; height: 7.5%; transform: translate(-50%,-50%); border-radius: 50%; border: 1.5px dashed rgba(255,233,163,.35); background: rgba(255,233,163,.06); cursor: pointer; padding: 0; }
       .spot:hover { border-color: rgba(255,233,163,.8); background: rgba(255,233,163,.14); }
-      .sitter { position: absolute; width: clamp(56px, 7.5%, 104px); transform: translate(-50%,-93%); text-align: center; animation: breath 4.6s ease-in-out infinite alternate; }
-      @keyframes breath { from { transform: translate(-50%,-93%) scale(1,1); } to { transform: translate(-50%,-93%) scale(1.015,1.025); } }
+      .sitter { position: absolute; width: clamp(56px, 7.5%, 104px); transform: translate(-50%,-100%); text-align: center; animation: breath 4.6s ease-in-out infinite alternate; }
+      @keyframes breath { from { transform: translate(-50%,-100%) scale(1,1); } to { transform: translate(-50%,-100%) scale(1.015,1.025); } }
       .sitter .aimg { display: block; width: 100%; filter: drop-shadow(0 5px 7px rgba(0,0,0,.4)); }
       .avatars { display: flex; gap: 8px; flex-wrap: wrap; }
       .avbtn { width: 52px; height: 52px; padding: 6px; border-radius: 12px; border: 2px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); cursor: pointer; }
       .avbtn img { width: 100%; height: 100%; display: block; }
       .avbtn.on { border-color: #d4a24a; background: rgba(212,162,74,.16); }
-      .sitter .nm { display: inline-block; margin-top: 1px; background: rgba(6,18,28,.65); color: #ffe9b0; border-radius: 7px; padding: 1px 8px 2px; font-size: 12px; line-height: 1.35; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sitter .nm { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); display: inline-block; background: rgba(6,18,28,.65); color: #ffe9b0; border-radius: 7px; padding: 1px 8px 2px; font-size: 12px; line-height: 1.35; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sitter.mine { cursor: pointer; }
       .sitter.mine .nm { background: rgba(120,72,10,.85); color: #fff3d6; }
       .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
@@ -194,7 +194,8 @@
         function fmtTime(ts) { var d = new Date(ts); return z(d.getHours()) + ":" + z(d.getMinutes()); }
 
         var SPOTS = [
-          { x: 26.5, y: 90.5 }, { x: 47, y: 92 }, { x: 61, y: 89 }, { x: 84, y: 89.5 }, { x: 94.5, y: 87 }
+          { x: 23.8, y: 92, s: 1.05 }, { x: 22.9, y: 81.5, s: 0.8 }, { x: 49.1, y: 90.6, s: 1 },
+          { x: 80.7, y: 81.8, s: 0.8 }, { x: 91.2, y: 89.2, s: 1 }
         ];
         function sitterImg(av) { return '<img class="aimg" src="./avatars/' + (av || "lotus-woman.png") + '" alt="Hình đại diện" />'; } var SITTER_SVG_OLD = '<svg viewBox="0 0 64 70" aria-hidden="true"><ellipse cx="32" cy="64.5" rx="24" ry="4.6" fill="rgba(0,0,0,.35)"/><ellipse cx="32" cy="60.5" rx="21" ry="5.4" fill="url(#cushGrad)"/><ellipse cx="32" cy="59.5" rx="16.5" ry="3.8" fill="none" stroke="rgba(90,64,32,.45)" stroke-width="1"/><path d="M32 20.5 C19.5 27.5 13.5 41 12 55.5 C12 59.5 52 59.5 52 55.5 C50.5 41 44.5 27.5 32 20.5 Z" fill="url(#robeGrad)"/><path d="M32 27 L32 56" stroke="rgba(0,0,0,.2)" stroke-width="1.6"/><ellipse cx="32" cy="52.5" rx="9.5" ry="4" fill="#5d3f27"/><ellipse cx="32" cy="51.5" rx="5" ry="2.6" fill="#c9a181"/><rect x="29.2" y="14.5" width="5.6" height="6" rx="2" fill="#c9a181"/><circle cx="32" cy="11" r="8.2" fill="#2a1c11"/><circle cx="32" cy="3.4" r="3.2" fill="#20150c"/><path d="M26.5 6.5 A7.5 7.5 0 0 1 33 4.2" stroke="rgba(255,230,190,.35)" stroke-width="1.4" fill="none"/></svg>';
         var LANTERN_SVG = '<svg viewBox="0 0 64 46" aria-hidden="true"><ellipse cx="32" cy="41" rx="24" ry="4" fill="rgba(255,186,92,.38)"/><g stroke="rgba(150,84,10,.45)" stroke-width="1"><path d="M32 34 C18 32 10 24 11 14 C20 18 27 25 32 34 Z" fill="#ffb84d"/><path d="M32 34 C46 32 54 24 53 14 C44 18 37 25 32 34 Z" fill="#ffb84d"/><path d="M32 36 C22 34 16 27 17 18 C24 22 29 28 32 36 Z" fill="#ffcf6e"/><path d="M32 36 C42 34 48 27 47 18 C40 22 35 28 32 36 Z" fill="#ffcf6e"/><path d="M32 37 C26 31 26 20 32 10 C38 20 38 31 32 37 Z" fill="url(#lanternGrad)"/></g><ellipse cx="32" cy="24" rx="3.4" ry="5.4" fill="#fff8d6"/></svg>';
@@ -299,7 +300,8 @@
             if (o) {
               var d = document.createElement("div");
               d.className = "sitter" + (o.key === myId ? " mine" : "");
-              d.style.left = sp.x + "%"; d.style.top = sp.y + "%";
+              d.style.left = sp.x + "%"; d.style.top = "calc(" + sp.y + "% + 10px)";
+              if (sp.s) d.style.width = "calc(clamp(56px, 7.5%, 104px) * " + sp.s + ")";
               d.innerHTML = sitterImg(o.avatar) + '<span class="nm">' + esc(o.name) + "</span>";
               if (o.key === myId) { d.title = "Chạm để đứng dậy"; d.addEventListener("click", stand); }
               else d.title = o.name + " đang ngồi thiền";
