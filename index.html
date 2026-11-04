@@ -12,6 +12,8 @@
       header { text-align: center; margin-bottom: 16px; }
       header h1 { font-family: Georgia, "Playfair Display", serif; font-size: 32px; margin: 6px 0 4px; }
       header p { color: #a1a1aa; margin: 0; font-size: 15px; }
+      h2.sec { font-family: Georgia, serif; font-size: 24px; margin: 34px 0 6px; }
+      p.sub { color: #a1a1aa; margin: 0 0 12px; font-size: 14.5px; }
       .scene { position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.5); }
       .scene img { display: block; width: 100%; height: auto; }
       .glow { position: absolute; width: 96px; height: 96px; border-radius: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(255,196,96,.5) 0%, rgba(255,150,60,.18) 45%, transparent 70%); mix-blend-mode: screen; pointer-events: none; animation: flick 1.9s ease-in-out infinite alternate; }
@@ -20,25 +22,55 @@
       .seats { position: absolute; inset: 0; }
       .spot { position: absolute; width: 58px; height: 38px; transform: translate(-50%,-50%); border-radius: 50%; border: 1.5px dashed rgba(255,233,163,.35); background: rgba(255,233,163,.06); cursor: pointer; padding: 0; }
       .spot:hover { border-color: rgba(255,233,163,.8); background: rgba(255,233,163,.14); }
-      .sitter { position: absolute; width: 58px; transform: translate(-50%,-88%); text-align: center; animation: breath 4.6s ease-in-out infinite alternate; }
-      @keyframes breath { from { transform: translate(-50%,-88%) scale(1,1); } to { transform: translate(-50%,-88%) scale(1.02,1.035); } }
-      .sitter svg { display: block; width: 58px; margin: 0 auto; filter: drop-shadow(0 3px 5px rgba(0,0,0,.45)); }
-      .sitter .nm { display: inline-block; margin-top: 1px; background: rgba(6,18,28,.65); color: #ffe9b0; border-radius: 7px; padding: 1px 8px 2px; font-size: 12px; line-height: 1.35; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sitter { position: absolute; width: 62px; transform: translate(-50%,-90%); text-align: center; animation: breath 4.6s ease-in-out infinite alternate; }
+      @keyframes breath { from { transform: translate(-50%,-90%) scale(1,1); } to { transform: translate(-50%,-90%) scale(1.02,1.03); } }
+      .sitter svg { display: block; width: 62px; margin: 0 auto; filter: drop-shadow(0 3px 5px rgba(0,0,0,.4)); }
+      .sitter .nm { display: inline-block; margin-top: 1px; background: rgba(6,18,28,.65); color: #ffe9b0; border-radius: 7px; padding: 1px 8px 2px; font-size: 12px; line-height: 1.35; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sitter.mine { cursor: pointer; }
-      .sitter.mine .nm { background: rgba(120,72,10,.8); color: #fff3d6; }
+      .sitter.mine .nm { background: rgba(120,72,10,.85); color: #fff3d6; }
       .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
       .status { flex: 1; color: #a8c4de; font-size: 14px; min-width: 200px; }
-      button.act { padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); color: #f4f4f5; font: inherit; font-weight: 600; cursor: pointer; }
+      button.act, a.act { padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); color: #f4f4f5; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
       button.act.primary { background: #d4a24a; border-color: transparent; color: #1a1405; }
-      button.act:disabled { opacity: .5; cursor: default; }
-      form.seatform { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-      form.seatform[hidden] { display: none; }
-      form.seatform input { flex: 1; min-width: 200px; background: rgba(255,255,255,.05); color: #f4f4f5; border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 15px; }
+      form.rowform { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+      form.rowform[hidden] { display: none; }
+      form.rowform input, .wishrow input { flex: 1; min-width: 180px; background: rgba(255,255,255,.05); color: #f4f4f5; border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 15px; }
+      .wishrow { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
       .hint { color: #71717a; font-size: 13px; margin-top: 12px; }
-      footer { text-align: center; color: #52525b; font-size: 12.5px; margin-top: 26px; }
+      .pond { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+      .pond img { display: block; width: 100%; height: auto; }
+      .pondLayer { position: absolute; inset: 0; }
+      .rlantern { position: absolute; width: 46px; will-change: transform; animation: sway2 ease-in-out infinite alternate; }
+      @keyframes sway2 { from { transform: translateX(0) translateY(0); } to { transform: translateX(var(--drift, 110px)) translateY(-5px); } }
+      .rlanternIn { text-align: center; animation: bob2 4.2s ease-in-out infinite alternate; }
+      @keyframes bob2 { from { transform: translateY(0) rotate(-1.6deg); } to { transform: translateY(-3px) rotate(1.6deg); } }
+      .rlantern svg { display: block; width: 46px; margin: 0 auto; opacity: .95; filter: drop-shadow(0 0 7px rgba(255,180,80,.65)); }
+      .rlantern .tag { display: inline-block; margin-top: 1px; max-width: 150px; background: rgba(6,18,28,.6); border-radius: 8px; padding: 2px 7px 3px; }
+      .rlantern .w { display: block; color: #ffe9b0; font-size: 11.5px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+      .rlantern .t { display: block; color: rgba(230,240,250,.8); font-size: 10.5px; line-height: 1.3; }
+      .xambox { margin-top: 14px; background: #141d2e; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 16px 18px; }
+      .xambox h3 { margin: 0 0 4px; font-family: Georgia, serif; font-size: 21px; }
+      .xambox .cap { color: #d4a24a; font-size: 13.5px; margin: 0 0 8px; }
+      .xambox pre { white-space: pre-wrap; font-family: Georgia, serif; font-style: italic; font-size: 16.5px; line-height: 1.65; margin: 0 0 10px; color: #f0e6cf; }
+      .xambox .giai { font-size: 15px; line-height: 1.6; color: #d7dee8; margin: 0 0 10px; }
+      .xambox .mat { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+      .xambox .mat div { background: rgba(255,255,255,.04); border-radius: 10px; padding: 9px 11px; }
+      .xambox .mat strong { color: #ffe9b0; font-size: 13.5px; }
+      .xambox .mat p { margin: 3px 0; font-size: 13.5px; line-height: 1.5; color: #c9d4e2; }
+      .xambox .mat em { color: #a1a1aa; font-size: 13px; }
+      #feed { list-style: none; padding: 0; margin: 8px 0 0; }
+      #feed li { padding: 7px 10px; background: rgba(255,255,255,.04); border-radius: 9px; margin-bottom: 6px; font-size: 13.5px; color: #c9d4e2; }
+      #feed li b { color: #ffe9b0; }
+      footer { text-align: center; color: #52525b; font-size: 12.5px; margin-top: 30px; }
     </style>
   </head>
   <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <linearGradient id="robeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7a5636"/><stop offset="100%" stop-color="#402b1a"/></linearGradient>
+      <radialGradient id="cushGrad" cx="50%" cy="42%" r="65%"><stop offset="0%" stop-color="#c49a5e"/><stop offset="100%" stop-color="#8a6a3c"/></radialGradient>
+      <radialGradient id="lanternGrad" cx="50%" cy="42%" r="65%"><stop offset="0%" stop-color="#fff6cf"/><stop offset="45%" stop-color="#ffd873"/><stop offset="100%" stop-color="#f59e2c"/></radialGradient>
+    </defs></svg>
+
     <div class="wrap">
       <header>
         <h1>🪷 Phòng Thiền Online</h1>
@@ -54,17 +86,52 @@
 
       <div class="bar">
         <span class="status" id="status">Đang kết nối phòng…</span>
+        <button class="act" id="roomNameBtn" type="button">✏️ Đặt tên phòng</button>
         <button class="act" id="copyBtn" type="button">🔗 Chép link mời bạn bè</button>
         <button class="act" id="standBtn" type="button" hidden>Đứng dậy</button>
       </div>
 
-      <form class="seatform" id="seatForm" hidden>
+      <form class="rowform" id="roomForm" hidden>
+        <input id="roomNameInput" type="text" maxlength="40" placeholder="Tên phòng (vd: Nhóm thiền tối thứ Bảy)" autocomplete="off" />
+        <button class="act primary" type="submit">Lưu tên phòng</button>
+        <button class="act" id="roomCancel" type="button">Huỷ</button>
+      </form>
+
+      <form class="rowform" id="seatForm" hidden>
         <input id="nameInput" type="text" maxlength="20" placeholder="Tên của bạn (vd: Bé Na)" autocomplete="off" />
-        <button class="act primary" id="sitBtn" type="submit">Ngồi xuống</button>
+        <button class="act primary" type="submit">Ngồi xuống</button>
         <button class="act" id="cancelBtn" type="button">Huỷ</button>
       </form>
 
-      <p class="hint">Chạm vào một đệm trống trong ảnh để ngồi. Khi bạn đang ngồi, đệm của bạn có thẻ tên màu vàng đậm — chạm vào chính mình hoặc nút "Đứng dậy" để rời đệm. Đóng trang là tự động rời phòng.</p>
+      <p class="hint">Chạm vào một đệm trống trong ảnh miếu để ngồi thiền cùng mọi người. Đang ngồi thì chạm vào chính mình hoặc nút "Đứng dậy" để rời đệm. Đóng trang là tự rời phòng.</p>
+
+      <h2 class="sec">🪷 Thả đèn hoa đăng</h2>
+      <p class="sub">Viết điều ước rồi thả đèn xuống ao sen — đèn của bạn sẽ hiện trên ao của tất cả mọi người trong phòng.</p>
+      <div class="pond">
+        <img src="./pond.webp" alt="Ao sen đêm trăng với đèn hoa đăng" />
+        <div class="pondLayer" id="pondLayer"></div>
+      </div>
+      <div class="wishrow">
+        <input id="wishInput" type="text" maxlength="60" placeholder="Điều ước của bạn…" />
+        <button class="act primary" id="lanternBtn" type="button">Thả đèn</button>
+      </div>
+
+      <h2 class="sec">🎋 Xin xăm tại miếu</h2>
+      <p class="sub">Tâm niệm điều muốn hỏi rồi lắc ống xăm — bộ Quan Âm Linh Xăm 100 quẻ. Mọi người trong phòng sẽ thấy bạn vừa xin được quẻ nào.</p>
+      <div class="bar">
+        <button class="act primary" id="shakeBtn" type="button">Lắc ống xăm</button>
+        <span class="status" id="xamStatus"></span>
+      </div>
+      <article class="xambox" id="xamBox" hidden>
+        <h3 id="xamTitle"></h3>
+        <p class="cap" id="xamCap"></p>
+        <pre id="xamTho"></pre>
+        <p class="giai" id="xamGiai"></p>
+        <div class="mat" id="xamMat"></div>
+      </article>
+
+      <h2 class="sec">📜 Hoạt động trong phòng</h2>
+      <ul id="feed"><li>Chưa có hoạt động nào — hãy là người đầu tiên.</li></ul>
 
       <footer>Phòng thiền là một góc riêng của Tử Vi Assistant — trang này chỉ có phòng thiền, không liên kết tới các mục khác của app.</footer>
     </div>
@@ -74,41 +141,63 @@
     <script>
       (function () {
         "use strict";
+        function $(id) { return document.getElementById(id); }
+        function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+        function z(n) { return (n < 10 ? "0" : "") + n; }
+        function fmtTime(ts) { var d = new Date(ts); return z(d.getHours()) + ":" + z(d.getMinutes()); }
+
         var SPOTS = [
           { x: 26.5, y: 89 }, { x: 47, y: 90.5 }, { x: 61, y: 87.5 }, { x: 84, y: 88 }, { x: 94.5, y: 85.5 }
         ];
-        var SITTER_SVG = '<svg viewBox="0 0 60 64" aria-hidden="true"><ellipse cx="30" cy="59" rx="22" ry="4.5" fill="rgba(0,0,0,.35)"/><path d="M30 18 C18 26 12 40 10 56 C10 60.5 50 60.5 50 56 C48 40 42 26 30 18 Z" fill="#503829"/><path d="M30 24 L30 55" stroke="rgba(0,0,0,.25)" stroke-width="1.6"/><circle cx="30" cy="12.5" r="8.6" fill="#2c1e14"/><circle cx="30" cy="4.8" r="3.4" fill="#211509"/></svg>';
-        function $(id) { return document.getElementById(id); }
-        function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+        var SITTER_SVG = '<svg viewBox="0 0 64 70" aria-hidden="true"><ellipse cx="32" cy="64.5" rx="24" ry="4.6" fill="rgba(0,0,0,.35)"/><ellipse cx="32" cy="60.5" rx="21" ry="5.4" fill="url(#cushGrad)"/><ellipse cx="32" cy="59.5" rx="16.5" ry="3.8" fill="none" stroke="rgba(90,64,32,.45)" stroke-width="1"/><path d="M32 20.5 C19.5 27.5 13.5 41 12 55.5 C12 59.5 52 59.5 52 55.5 C50.5 41 44.5 27.5 32 20.5 Z" fill="url(#robeGrad)"/><path d="M32 27 L32 56" stroke="rgba(0,0,0,.2)" stroke-width="1.6"/><ellipse cx="32" cy="52.5" rx="9.5" ry="4" fill="#5d3f27"/><ellipse cx="32" cy="51.5" rx="5" ry="2.6" fill="#c9a181"/><rect x="29.2" y="14.5" width="5.6" height="6" rx="2" fill="#c9a181"/><circle cx="32" cy="11" r="8.2" fill="#2a1c11"/><circle cx="32" cy="3.4" r="3.2" fill="#20150c"/><path d="M26.5 6.5 A7.5 7.5 0 0 1 33 4.2" stroke="rgba(255,230,190,.35)" stroke-width="1.4" fill="none"/></svg>';
+        var LANTERN_SVG = '<svg viewBox="0 0 64 46" aria-hidden="true"><ellipse cx="32" cy="41" rx="24" ry="4" fill="rgba(255,186,92,.38)"/><g stroke="rgba(150,84,10,.45)" stroke-width="1"><path d="M32 34 C18 32 10 24 11 14 C20 18 27 25 32 34 Z" fill="#ffb84d"/><path d="M32 34 C46 32 54 24 53 14 C44 18 37 25 32 34 Z" fill="#ffb84d"/><path d="M32 36 C22 34 16 27 17 18 C24 22 29 28 32 36 Z" fill="#ffcf6e"/><path d="M32 36 C42 34 48 27 47 18 C40 22 35 28 32 36 Z" fill="#ffcf6e"/><path d="M32 37 C26 31 26 20 32 10 C38 20 38 31 32 37 Z" fill="url(#lanternGrad)"/></g><ellipse cx="32" cy="24" rx="3.4" ry="5.4" fill="#fff8d6"/></svg>';
 
         var params = new URLSearchParams(location.search);
         var room = (params.get("phong") || "mieu-ba").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24) || "mieu-ba";
-        if (room !== "mieu-ba") $("roomLine").textContent = "Phòng: " + room + " — ngồi thiền cùng nhau, mỗi người một đệm.";
+        var paramName = (params.get("ten") || "").slice(0, 40);
 
         var myId = sessionStorage.getItem("pt_id");
         if (!myId) { myId = "khach-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8); sessionStorage.setItem("pt_id", myId); }
-        var mySeat = null; // {spot, name}
+        var myState = { name: null, spot: null, roomName: null, nameAt: 0 };
+        try { myState.name = localStorage.getItem("pt_name") || null; } catch (e) {}
         var pickSpot = -1;
+
+        function myName() { return myState.name || "Một vị khách"; }
+        function feed(html) {
+          var ul = $("feed");
+          if (ul.querySelector("li") && ul.children.length === 1 && ul.textContent.indexOf("Chưa có hoạt động") === 0) ul.innerHTML = "";
+          var li = document.createElement("li");
+          li.innerHTML = html;
+          ul.insertBefore(li, ul.firstChild);
+          while (ul.children.length > 12) ul.removeChild(ul.lastChild);
+        }
 
         var cfg = window.PHONG_THIEN_CONFIG || {};
         if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) { $("status").textContent = "Chưa có cấu hình kết nối phòng."; return; }
         var sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-        var channel = sb.channel("phong-thien:" + room, { config: { presence: { key: myId } } });
+        var channel = sb.channel("phong-thien:" + room, { config: { presence: { key: myId }, broadcast: { self: true } } });
 
-        function occupants() {
-          var st = channel.presenceState(), occ = {};
+        function trackState() { channel.track(Object.assign({}, myState, { at: Date.now() })).then(render, render); }
+        function entries() {
+          var st = channel.presenceState(), out = [];
           Object.keys(st).forEach(function (key) {
-            (st[key] || []).forEach(function (p) {
-              if (typeof p.spot === "number" && !(p.spot in occ)) occ[p.spot] = { name: p.name || "Khách", key: key };
-            });
+            (st[key] || []).forEach(function (p) { out.push({ key: key, p: p }); });
           });
-          return occ;
+          return out;
+        }
+        function currentRoomName() {
+          var best = null, bestAt = 0;
+          entries().forEach(function (e) { if (e.p.roomName && (e.p.nameAt || 0) >= bestAt) { bestAt = e.p.nameAt || 0; best = e.p.roomName; } });
+          return best || paramName || null;
         }
 
         function render() {
           var layer = $("seatLayer");
           layer.innerHTML = "";
-          var occ = occupants(), count = Object.keys(occ).length;
+          var occ = {}, count = 0;
+          entries().forEach(function (e) {
+            if (typeof e.p.spot === "number" && !(e.p.spot in occ)) { occ[e.p.spot] = { name: e.p.name || "Khách", key: e.key }; count++; }
+          });
           SPOTS.forEach(function (sp, idx) {
             var o = occ[idx];
             if (o) {
@@ -116,12 +205,8 @@
               d.className = "sitter" + (o.key === myId ? " mine" : "");
               d.style.left = sp.x + "%"; d.style.top = sp.y + "%";
               d.innerHTML = SITTER_SVG + '<span class="nm">' + esc(o.name) + "</span>";
-              if (o.key === myId) {
-                d.title = "Chạm để đứng dậy";
-                d.addEventListener("click", stand);
-              } else {
-                d.title = o.name + " đang ngồi thiền";
-              }
+              if (o.key === myId) { d.title = "Chạm để đứng dậy"; d.addEventListener("click", stand); }
+              else d.title = o.name + " đang ngồi thiền";
               layer.appendChild(d);
             } else {
               var b = document.createElement("button");
@@ -133,58 +218,131 @@
               layer.appendChild(b);
             }
           });
-          $("standBtn").hidden = !mySeat;
-          if (mySeat) {
-            $("status").textContent = "Bạn đang ngồi ở đệm " + (mySeat.spot + 1) + " · Phòng có " + count + " người đang ngồi.";
-          } else {
-            $("status").textContent = count ? "Phòng có " + count + " người đang ngồi · Chọn một đệm trống để ngồi cùng." : "Phòng đang vắng · Chọn một đệm để ngồi đầu tiên.";
-          }
+          $("standBtn").hidden = myState.spot === null;
+          if (myState.spot !== null) $("status").textContent = "Bạn đang ngồi ở đệm " + (myState.spot + 1) + " · Phòng có " + count + " người đang ngồi.";
+          else $("status").textContent = count ? "Phòng có " + count + " người đang ngồi · Chọn một đệm trống để ngồi cùng." : "Phòng đang vắng · Chọn một đệm để ngồi đầu tiên.";
+          var rn = currentRoomName();
+          $("roomLine").textContent = rn ? "🪷 " + rn : (room !== "mieu-ba" ? "Phòng: " + room + " — ngồi thiền cùng nhau, mỗi người một đệm." : "Miếu Bà — ngồi thiền cùng nhau, mỗi người một đệm.");
         }
 
         function askName(idx) {
           pickSpot = idx;
-          var saved = "";
-          try { saved = localStorage.getItem("pt_name") || ""; } catch (e) {}
-          if (saved && mySeat === null) { sit(idx, saved); return; }
-          if (saved) { sit(idx, saved); return; }
+          if (myState.name) { sit(idx, myState.name); return; }
           $("seatForm").hidden = false;
           $("nameInput").focus();
         }
         function sit(idx, name) {
           name = (name || "").trim().slice(0, 20) || "Khách";
           try { localStorage.setItem("pt_name", name); } catch (e) {}
-          mySeat = { spot: idx, name: name };
-          channel.track({ name: name, spot: idx, at: Date.now() }).then(render, render);
+          myState.name = name; myState.spot = idx;
           $("seatForm").hidden = true;
+          trackState();
+          feed("🧘 <b>" + esc(name) + "</b> vừa ngồi xuống đệm " + (idx + 1) + ".");
         }
         function stand() {
-          mySeat = null;
-          channel.untrack().then(render, render);
+          var was = myState.spot;
+          myState.spot = null;
+          trackState();
+          if (was !== null && was !== undefined) feed("🧘 <b>" + esc(myName()) + "</b> vừa đứng dậy.");
         }
 
-        $("seatForm").addEventListener("submit", function (ev) {
-          ev.preventDefault();
-          if (pickSpot >= 0) sit(pickSpot, $("nameInput").value);
-          pickSpot = -1;
-        });
+        $("seatForm").addEventListener("submit", function (ev) { ev.preventDefault(); if (pickSpot >= 0) sit(pickSpot, $("nameInput").value); pickSpot = -1; });
         $("cancelBtn").addEventListener("click", function () { pickSpot = -1; $("seatForm").hidden = true; });
         $("standBtn").addEventListener("click", stand);
+        $("roomNameBtn").addEventListener("click", function () { $("roomForm").hidden = !$("roomForm").hidden; if (!$("roomForm").hidden) $("roomNameInput").focus(); });
+        $("roomCancel").addEventListener("click", function () { $("roomForm").hidden = true; });
+        $("roomForm").addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          var v = $("roomNameInput").value.trim().slice(0, 40);
+          if (!v) return;
+          myState.roomName = v; myState.nameAt = Date.now();
+          $("roomForm").hidden = true;
+          trackState();
+          feed("✏️ Phòng được đặt tên: <b>" + esc(v) + "</b>");
+        });
         $("copyBtn").addEventListener("click", function () {
-          var link = location.href;
+          var u = new URL(location.href);
+          var rn = currentRoomName();
+          if (rn) u.searchParams.set("ten", rn);
+          var link = u.toString();
           function done() { $("copyBtn").textContent = "✅ Đã chép link"; setTimeout(function () { $("copyBtn").textContent = "🔗 Chép link mời bạn bè"; }, 2200); }
           if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, done);
-          else {
-            var t = document.createElement("textarea");
-            t.value = link; document.body.appendChild(t); t.select();
-            try { document.execCommand("copy"); } catch (e) {}
-            t.remove(); done();
+          else { var t = document.createElement("textarea"); t.value = link; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); } catch (e) {} t.remove(); done(); }
+        });
+
+        /* ── Hoa đăng dùng chung ── */
+        function renderLantern(p) {
+          var layer = $("pondLayer");
+          var el = document.createElement("div");
+          el.className = "rlantern";
+          el.style.left = p.left + "%";
+          el.style.bottom = p.bottom + "px";
+          el.style.setProperty("--drift", p.drift + "px");
+          el.style.animationDuration = p.dur + "s";
+          el.innerHTML = '<div class="rlanternIn">' + LANTERN_SVG + '<span class="tag">' +
+            (p.wish ? '<span class="w">' + esc(p.wish) + "</span>" : "") +
+            '<span class="t">' + esc(p.name) + " · " + fmtTime(p.ts) + "</span></span></div>";
+          el.title = (p.wish ? p.wish + " — " : "") + p.name;
+          layer.appendChild(el);
+          setTimeout(function () { el.remove(); }, 10 * 60 * 1000);
+        }
+        channel.on("broadcast", { event: "lantern" }, function (msg) {
+          renderLantern(msg.payload);
+          feed("🪷 <b>" + esc(msg.payload.name) + "</b> thả đèn hoa đăng" + (msg.payload.wish ? ": “" + esc(msg.payload.wish) + "”" : "."));
+        });
+        $("lanternBtn").addEventListener("click", function () {
+          var p = {
+            name: myName(), wish: $("wishInput").value.trim().slice(0, 60), ts: Date.now(),
+            left: 4 + Math.random() * 38, bottom: 14 + Math.random() * 56,
+            drift: Math.round(90 + Math.random() * 150), dur: Math.round(9 + Math.random() * 7)
+          };
+          $("wishInput").value = "";
+          channel.send({ type: "broadcast", event: "lantern", payload: p });
+        });
+
+        /* ── Xin xăm dùng chung ── */
+        var XAM = null, MAT = { tong_quan: "Tổng quan", su_nghiep: "Sự nghiệp", tinh_duyen: "Tình duyên", tai_chinh: "Tài chính", suc_khoe: "Sức khỏe", hoc_hanh: "Học hành" };
+        function showXam(q) {
+          $("xamTitle").textContent = "Quẻ số " + q.so_que + " — " + q.ten_que;
+          $("xamCap").textContent = "Hạng: " + (q.cap_label || q.cap) + " · Ngũ hành: " + (q.ngu_hanh || "");
+          $("xamTho").textContent = q.tho || "";
+          $("xamGiai").textContent = q.loi_giai_chung || "";
+          var html = "";
+          Object.keys(MAT).forEach(function (k) {
+            var m = (q.cac_mat || {})[k];
+            if (!m) return;
+            html += "<div><strong>" + MAT[k] + "</strong><p>" + esc(m.nhin_nhan || "") + "</p>" + (m.cau_dong_vien ? "<em>" + esc(m.cau_dong_vien) + "</em>" : "") + "</div>";
+          });
+          $("xamMat").innerHTML = html;
+          $("xamBox").hidden = false;
+        }
+        channel.on("broadcast", { event: "xam" }, function (msg) {
+          if (msg.payload && msg.payload.from !== myId) feed("🎋 <b>" + esc(msg.payload.name) + "</b> vừa xin được quẻ " + msg.payload.so + " — " + esc(msg.payload.ten) + ".");
+        });
+        $("shakeBtn").addEventListener("click", function () {
+          var btn = $("shakeBtn");
+          btn.disabled = true;
+          $("xamStatus").textContent = "Đang lắc ống xăm…";
+          function draw() {
+            var q = XAM[Math.floor(Math.random() * XAM.length)];
+            showXam(q);
+            $("xamStatus").textContent = "";
+            btn.disabled = false;
+            channel.send({ type: "broadcast", event: "xam", payload: { from: myId, name: myName(), so: q.so_que, ten: q.ten_que } });
+            feed("🎋 <b>" + esc(myName()) + "</b> vừa xin được quẻ " + q.so_que + " — " + esc(q.ten_que) + ".");
+            $("xamBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
           }
+          if (XAM) { setTimeout(draw, 500); return; }
+          fetch("./xam.json").then(function (r) { return r.json(); }).then(function (d) {
+            XAM = d.danh_sach_que || [];
+            if (XAM.length) draw(); else { $("xamStatus").textContent = "Chưa tải được dữ liệu xăm."; btn.disabled = false; }
+          }).catch(function () { $("xamStatus").textContent = "Chưa tải được dữ liệu xăm — thử lại sau."; btn.disabled = false; });
         });
 
         channel.on("presence", { event: "sync" }, render);
         channel.subscribe(function (status) {
-          if (status === "SUBSCRIBED") { $("status").textContent = "Đã vào phòng · Chọn một đệm trống để ngồi."; render(); }
-          else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") { $("status").textContent = "Mất kết nối phòng — tải lại trang để vào lại."; }
+          if (status === "SUBSCRIBED") render();
+          else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") $("status").textContent = "Mất kết nối phòng — tải lại trang để vào lại.";
         });
         window.addEventListener("beforeunload", function () { try { channel.untrack(); } catch (e) {} });
       })();
