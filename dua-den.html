@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.7 -->
+    <!-- build v0.8 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -43,6 +43,10 @@
       .rlan.me svg { filter: drop-shadow(0 0 12px rgba(255,210,90,.95)); }
       .rlan .gatebadge { position: absolute; top: -8px; right: -6px; font-size: 14px; background: rgba(10,16,26,.85); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; }
       .banner { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(10,16,26,.85); border: 1px solid #f2b64b; color: #ffe1a1; border-radius: 999px; padding: 6px 16px; font-size: 14px; display: none; white-space: nowrap; }
+      .frow { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+      .frow input { flex: 1; margin: 0; }
+      .frow select { background: #16233c; color: #d7e3f2; border: 1px solid #2b4066; border-radius: 10px; padding: 9px 8px; font-size: 14px; }
+      .frow .fdel { padding: 7px 11px; }
       .mtracks { display: flex; flex-wrap: wrap; gap: 8px; }
       .mtracks button { background: #16233c; color: #d7e3f2; border: 1px solid #2b4066; border-radius: 999px; padding: 7px 13px; font-size: 13.5px; cursor: pointer; }
       .mtracks button:hover { border-color: #f2b64b; }
@@ -86,7 +90,15 @@
           <button class="btn" id="joinBtn">🪷 Thả đèn xuống ao</button>
           <span class="status" id="joinStatus"></span>
         </div>
-        <p class="hint">Đèn của chùa đã chờ sẵn ở vạch xuất phát: Cô Tư, Chú Bảy, Bà Tám và Ông Chín — mỗi người một cổng. Luật quẻ: đèn về <b>nhất</b> chắc chắn rút được quẻ tốt; đèn về <b>cuối</b> quẻ chỉ hơi chưa thuận, không bao giờ là quẻ nặng. Nội dung quẻ chỉ hiện cho chủ đèn — người ngoài chỉ thấy số quẻ và biết quẻ tốt hay chưa thuận.</p>
+        <div style="margin-top:14px">
+          <label>👥 Thêm bạn cùng đua (tối đa 4 người)</label>
+          <div id="friendRows"></div>
+          <div class="row">
+            <button class="btn ghost" id="addFriendBtn" type="button">＋ Thêm một người bạn</button>
+            <span class="status" id="fillInfo"></span>
+          </div>
+        </div>
+        <p class="hint">Luật ghép đội: đường đua luôn đủ 5 đèn — chị thêm bao nhiêu bạn thì số đèn ảo của chùa (Cô Tư, Chú Bảy, Bà Tám, Ông Chín) giảm đi bấy nhiêu; đủ 5 người thật thì không còn đèn ảo. Mỗi người bạn tự chọn cổng của mình, và xem được toàn văn quẻ của chính mình ở mục kết quả. Luật quẻ: đèn về <b>nhất</b> chắc chắn rút được quẻ tốt; đèn về <b>cuối</b> quẻ chỉ hơi chưa thuận, không bao giờ là quẻ nặng. Nội dung quẻ chỉ hiện cho chủ đèn — người ngoài chỉ thấy số quẻ và biết quẻ tốt hay chưa thuận.</p>
       </div>
 
       <div class="card">
@@ -205,8 +217,8 @@
       });
       $("nameIn").value = localStorage.getItem("pt_name") || "";
 
-      function makeRacer(name, gate, isMe, laneIdx) {
-        return { name: name, gate: gate, isMe: !!isMe, lane: laneIdx, p: 0, base: rnd(0.021, 0.028),
+      function makeRacer(name, gate, isMe, laneIdx, isReal) {
+        return { name: name, gate: gate, isMe: !!isMe, real: isReal === true || !!isMe, lane: laneIdx, p: 0, base: rnd(0.021, 0.028),
                  phase: rnd(0, Math.PI * 2), freq: rnd(0.5, 0.9), boostUntil: 0, finished: false, rank: 0, que: null, el: null };
       }
       function renderRacer(r) {
@@ -217,18 +229,55 @@
         $("lanes").appendChild(d);
         r.el = d;
       }
+      function updateFill() {
+        var rows = $("friendRows").children.length;
+        var n = 1 + rows, npc = 5 - n;
+        $("fillInfo").textContent = "Đang có " + n + " người thật → " +
+          (npc > 0 ? "chùa thêm " + npc + " đèn ảo cho đủ 5 đèn." : "đủ 5 người thật, không cần đèn ảo.");
+        $("addFriendBtn").disabled = rows >= 4;
+      }
+      function friendRow() {
+        var idx = $("friendRows").children.length;
+        var row = document.createElement("div");
+        row.className = "frow";
+        row.innerHTML = '<input type="text" class="fname" maxlength="24" placeholder="Tên người bạn" />' +
+          '<select class="fgate">' + GATES.map(function (g, i) { return '<option value="' + i + '"' + (i === idx % 5 ? " selected" : "") + ">" + g.icon + " " + g.label + "</option>"; }).join("") + "</select>" +
+          '<button type="button" class="btn ghost fdel">✕</button>';
+        row.querySelector(".fdel").onclick = function () { row.remove(); updateFill(); };
+        return row;
+      }
+      $("addFriendBtn").onclick = function () {
+        if ($("friendRows").children.length >= 4) return;
+        var r = friendRow();
+        $("friendRows").appendChild(r);
+        updateFill();
+        var inp = r.querySelector(".fname"); if (inp) inp.focus();
+      };
+      function readFriends() {
+        var out = [];
+        document.querySelectorAll("#friendRows .frow").forEach(function (row, idx) {
+          var nm = row.querySelector(".fname").value.trim();
+          var gi = parseInt(row.querySelector(".fgate").value || "0", 10);
+          out.push({ name: nm || ("Bạn " + (idx + 1)), gate: GATES[gi] || GATES[0] });
+        });
+        return out;
+      }
       function placeAll() {
         $("lanes").innerHTML = ""; racers = [];
-        var me = racers.length;
-        var mine = makeRacer($("nameIn").value.trim() || "Bạn", myGate, true, 2);
+        var laneOrder = [2, 0, 4, 1, 3];
+        var mine = makeRacer($("nameIn").value.trim() || "Bạn", myGate, true, laneOrder[0], true);
         racers.push(mine);
-        var lanePool = [0, 1, 3, 4];
-        NPCS.forEach(function (n, i) {
-          racers.push(makeRacer(n.name, pick(GATES), false, lanePool[i]));
+        readFriends().forEach(function (f, i) {
+          racers.push(makeRacer(f.name, f.gate, false, laneOrder[i + 1], true));
         });
+        var need = 5 - racers.length;
+        for (var k = 0; k < need; k++) {
+          racers.push(makeRacer(NPCS[k].name, pick(GATES), false, laneOrder[racers.length], false));
+        }
         racers.forEach(renderRacer);
         return mine;
       }
+      updateFill();
 
       $("joinBtn").onclick = function () {
         if (!XAM) { $("joinStatus").textContent = "Đang tải bộ quẻ, chờ một chút rồi thử lại…"; return; }
@@ -236,10 +285,14 @@
         placeAll();
         finishedCount = 0; myResult = null;
         $("resultCard").style.display = "none"; $("myReward").innerHTML = "";
-        $("joinStatus").textContent = "Đèn của bạn đã xuống nước, ở làn giữa. Sẵn sàng đua!";
+        var nReal = racers.filter(function (r) { return r.real; }).length;
+        $("joinStatus").textContent = "Đã thả 5 đèn: " + nReal + " người thật" + (5 - nReal > 0 ? " + " + (5 - nReal) + " đèn của chùa" : "") + ". Sẵn sàng đua!";
         $("startBtn").disabled = false; $("resetBtn").disabled = true;
         $("raceStatus").textContent = "5 đèn đã vào vị trí. Bấm Bắt đầu đua!";
         feed("🪷 " + esc(racers[0].name) + " thả đèn, hướng về cổng " + myGate.icon + " " + esc(myGate.label) + ".");
+        racers.forEach(function (r) {
+          if (r.real && !r.isMe) feed("👥 " + esc(r.name) + " cùng tham gia, hướng về cổng " + r.gate.icon + " " + esc(r.gate.label) + ".");
+        });
       };
 
       function drawQue(rank, isLast) {
@@ -271,28 +324,27 @@
         $("raceStatus").textContent = "Cuộc đua kết thúc! Xem phần thưởng ở mục 3 bên dưới.";
         $("resetBtn").disabled = false;
         renderResults();
-        feed("🎉 Tất cả đèn đã về đích. Phần thưởng quẻ chỉ chủ đèn mới mở xem được.");
+        feed("🎉 Tất cả đèn đã về đích. Mỗi người thật xem thẻ quẻ của mình ở mục 3; đèn của chùa thì khóa nội dung.");
       }
       function renderResults() {
         var rows = racers.slice().sort(function (a, b) { return a.rank - b.rank; }).map(function (r) {
           return "<tr><td><b>" + r.rank + "</b></td><td>" + (r.isMe ? "⭐ " : "") + esc(r.name) + "</td><td>" + r.gate.icon + " " + esc(r.gate.label) +
             "</td><td>Quẻ số <b>" + r.que.so_que + "</b><br />" + capChip(r.que.cap) + "</td><td>" +
-            (r.isMe ? "👇 Mở ở thẻ bên dưới" : '<span class="lock">🔒 Chỉ chủ đèn mới xem được nội dung</span>') + "</td></tr>";
+            (r.real ? "👇 Mở ở thẻ bên dưới" : '<span class="lock">🔒 Đèn của chùa — nội dung được khóa</span>') + "</td></tr>";
         }).join("");
         $("resBody").innerHTML = rows;
         $("resultCard").style.display = "block";
-        if (myResult) {
-          var q = myResult.que, asp = q.cac_mat[myResult.gate.aspect] || q.cac_mat.tong_quan;
+        var cards = racers.filter(function (r) { return r.real; }).sort(function (a, b) { return a.rank - b.rank; }).map(function (r) {
+          var q = r.que, asp = q.cac_mat[r.gate.aspect] || q.cac_mat.tong_quan;
           var tips = (asp.goi_y_hanh_dong || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
-          $("myReward").innerHTML =
-            '<div class="reward"><h3>🎁 Phần thưởng của bạn — Quẻ số ' + q.so_que + ": " + esc(q.ten_que) + "</h3>" +
-            capChip(q.cap) + ' <span class="lock">Cổng ' + myResult.gate.icon + " " + esc(myResult.gate.label) + " · về đích thứ " + myResult.rank + "</span>" +
+          return '<div class="reward"><h3>🎁 Phần thưởng của ' + esc(r.name) + " — Quẻ số " + q.so_que + ": " + esc(q.ten_que) + "</h3>" +
+            capChip(q.cap) + ' <span class="lock">Cổng ' + r.gate.icon + " " + esc(r.gate.label) + " · về đích thứ " + r.rank + "</span>" +
             '<div class="lbl">Bài xăm</div><div class="tho">' + esc(q.tho) + "</div>" +
             '<div class="lbl">Giải chung</div><p>' + esc(q.loi_giai_chung) + "</p>" +
-            '<div class="lbl">Riêng mặt ' + esc(myResult.gate.label) + "</div><p>" + esc(asp.nhin_nhan) + "</p><p><i>" + esc(asp.cau_dong_vien) + "</i></p>" +
-            (tips ? '<div class="lbl">Gợi ý hành động</div><ul>' + tips + "</ul>" : "") +
-            '<p class="lock" style="margin-top:12px">🔒 Nội dung này chỉ hiện cho bạn — người khác chỉ thấy số quẻ và hạng quẻ của bạn.</p></div>';
-        }
+            '<div class="lbl">Riêng mặt ' + esc(r.gate.label) + "</div><p>" + esc(asp.nhin_nhan) + "</p><p><i>" + esc(asp.cau_dong_vien) + "</i></p>" +
+            (tips ? '<div class="lbl">Gợi ý hành động</div><ul>' + tips + "</ul>" : "") + "</div>";
+        }).join("");
+        $("myReward").innerHTML = cards;
       }
       function step(ts) {
         if (!racing) return;
