@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>Đua Đèn Hoa Đăng — 🏮</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Be Vietnam Pro", system-ui, sans-serif; background: #0d1420; color: #eef2f7; }
+      h1, h2, h3 { font-family: "Noto Serif", serif; }
+      .wrap { max-width: 1120px; margin: 0 auto; padding: 18px 14px 60px; }
+      header { text-align: center; padding: 14px 0 4px; }
+      header h1 { margin: 0; font-size: 34px; }
+      header p { color: #aebdd0; margin: 6px 0 0; }
+      .backlink { color: #9fc3ff; font-size: 13px; text-decoration: none; }
+      .card { background: #16202f; border: 1px solid #263650; border-radius: 16px; padding: 16px; margin-top: 16px; }
+      .card h2 { margin: 0 0 10px; font-size: 20px; }
+      label { font-size: 13px; color: #aebdd0; display: block; margin: 10px 0 4px; }
+      input[type="text"] { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #33465f; background: #0d1624; color: #eef2f7; font-size: 15px; }
+      .gates { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+      .gate { border: 1px solid #33465f; background: #0d1624; color: #dbe6f3; border-radius: 999px; padding: 8px 14px; font-size: 14px; cursor: pointer; font-family: inherit; }
+      .gate.on { background: #f2b64b; color: #23180a; border-color: #f2b64b; font-weight: 700; }
+      .btn { border: 0; border-radius: 10px; padding: 11px 18px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; background: #f2b64b; color: #23180a; }
+      .btn.ghost { background: #22314a; color: #dbe6f3; }
+      .btn:disabled { opacity: .45; cursor: default; }
+      .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+      .status { color: #ffdf8a; font-size: 14px; min-height: 20px; }
+      .scene { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid #263650; }
+      .scene > img { display: block; width: 100%; height: auto; }
+      .finish { position: absolute; left: 90%; top: 4%; bottom: 4%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
+      .finish span { position: absolute; top: 2px; left: 6px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
+      .gatepost { position: absolute; left: 91.2%; transform: translateY(-50%); font-size: 11px; background: rgba(10,16,26,.72); border: 1px solid #4a3a16; color: #ffe1a1; border-radius: 999px; padding: 2px 8px; white-space: nowrap; opacity: .55; }
+      .gatepost.lit { opacity: 1; border-color: #ffd66e; box-shadow: 0 0 12px rgba(255,200,80,.65); color: #fff0cd; }
+      .lanes { position: absolute; inset: 0; }
+      .rlan { position: absolute; width: 54px; transform: translate(-50%,-50%); text-align: center; transition: none; }
+      .rlan svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 4px 10px rgba(255,170,40,.35)); }
+      .rlan .tag { display: inline-block; margin-top: 1px; font-size: 11px; background: rgba(10,16,26,.78); border-radius: 999px; padding: 1px 8px; color: #ffe9bd; white-space: nowrap; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+      .rlan.me svg { filter: drop-shadow(0 0 12px rgba(255,210,90,.95)); }
+      .rlan .gatebadge { position: absolute; top: -8px; right: -6px; font-size: 14px; background: rgba(10,16,26,.85); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; }
+      .banner { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(10,16,26,.85); border: 1px solid #f2b64b; color: #ffe1a1; border-radius: 999px; padding: 6px 16px; font-size: 14px; display: none; white-space: nowrap; }
+      .feed { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; }
+      .feed li { padding: 6px 2px; border-bottom: 1px dashed #263650; font-size: 14px; color: #d7e3f2; }
+      table.res { width: 100%; border-collapse: collapse; font-size: 14px; }
+      table.res td, table.res th { padding: 8px 6px; border-bottom: 1px solid #263650; text-align: left; }
+      .chip { border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+      .chip.good { background: #14532d; color: #bbf7d0; }
+      .chip.mid { background: #3f3f46; color: #e4e4e7; }
+      .chip.low { background: #713f12; color: #fde68a; }
+      .lock { color: #8fa5bd; font-size: 13px; }
+      .reward { background: #1d1503; border: 1px solid #8a6d1f; border-radius: 14px; padding: 16px; margin-top: 14px; }
+      .reward h3 { margin: 0 0 4px; color: #ffd66e; }
+      .reward .tho { white-space: pre-line; font-style: italic; color: #ffe9bd; line-height: 1.7; }
+      .reward .lbl { color: #aebdd0; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; margin-top: 12px; }
+      .reward ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.65; }
+      .reward p { line-height: 1.65; margin: 6px 0 0; }
+      .hint { color: #8fa5bd; font-size: 13px; line-height: 1.6; }
+      footer { text-align: center; color: #647d99; font-size: 12px; margin-top: 26px; line-height: 1.7; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a class="backlink" href="./">← Về Phòng Thiền Online</a>
+        <h1>🏮 Đua Đèn Hoa Đăng</h1>
+        <p>Thả đèn, chọn cổng ước nguyện, đua theo gió nước — về đích nhận quẻ xăm đúng chủ đề của mình.</p>
+      </header>
+
+      <div class="card">
+        <h2>1 · Thả đèn của bạn</h2>
+        <label>Tên của bạn</label>
+        <input id="nameIn" type="text" maxlength="24" placeholder="Ví dụ: Ivy" />
+        <label>Lời ước nguyện (không bắt buộc)</label>
+        <input id="wishIn" type="text" maxlength="60" placeholder="Ví dụ: Mong năm nay công việc hanh thông" />
+        <label>Chọn cổng đích — chủ đề bạn muốn xin quẻ</label>
+        <div class="gates" id="gates"></div>
+        <div class="row">
+          <button class="btn" id="joinBtn">🪷 Thả đèn xuống ao</button>
+          <span class="status" id="joinStatus"></span>
+        </div>
+        <p class="hint">Đèn của chùa đã chờ sẵn ở vạch xuất phát: Cô Tư, Chú Bảy, Bà Tám và Ông Chín — mỗi người một cổng. Luật quẻ: đèn về <b>nhất</b> chắc chắn rút được quẻ tốt; đèn về <b>cuối</b> quẻ chỉ hơi chưa thuận, không bao giờ là quẻ nặng. Nội dung quẻ chỉ hiện cho chủ đèn — người ngoài chỉ thấy số quẻ và biết quẻ tốt hay chưa thuận.</p>
+      </div>
+
+      <div class="card">
+        <h2>2 · Cuộc đua</h2>
+        <div class="scene">
+          <img src="pond.webp" alt="Ao hoa đăng" />
+          <div class="finish"><span>VẠCH ĐÍCH</span></div>
+          <div id="posts"></div>
+          <div class="lanes" id="lanes"></div>
+          <div class="banner" id="banner"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="startBtn" disabled>🏁 Bắt đầu đua</button>
+          <button class="btn ghost" id="resetBtn" disabled>↺ Đua lượt mới</button>
+          <span class="status" id="raceStatus">Thả đèn của bạn rồi bấm Bắt đầu đua.</span>
+        </div>
+      </div>
+
+      <div class="card" id="resultCard" style="display:none">
+        <h2>3 · Kết quả &amp; phần thưởng</h2>
+        <table class="res"><thead><tr><th>Hạng</th><th>Đèn</th><th>Cổng</th><th>Quẻ rút được</th><th>Nội dung</th></tr></thead><tbody id="resBody"></tbody></table>
+        <div id="myReward"></div>
+      </div>
+
+      <div class="card">
+        <h2>📜 Diễn biến</h2>
+        <ul class="feed" id="feed"></ul>
+      </div>
+
+      <footer>Bản thử nghiệm — đua đèn là trò chơi riêng, không thuộc Phòng Thiền.<br />Quẻ dùng bộ Quan Âm Linh Xăm có sẵn; câu giải hiển thị đúng mặt chủ đề của cổng đích.</footer>
+    </div>
+
+    <script>
+      "use strict";
+      var LANTERN_SVG = "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><defs><radialGradient id='lg' cx='50%' cy='38%' r='65%'><stop offset='0%' stop-color='#fff3c4'/><stop offset='55%' stop-color='#ffd66e'/><stop offset='100%' stop-color='#e8930c'/></radialGradient></defs><ellipse cx='32' cy='52' rx='17' ry='4.5' fill='rgba(0,0,0,.25)'/><path d='M32 50 C14 46 8 36 10 27 C18 33 24 35 32 35 C40 35 46 33 54 27 C56 36 50 46 32 50Z' fill='url(#lg)'/><path d='M32 49 C20 44 16 34 19 24 C24 30 28 32 32 32 C36 32 40 30 45 24 C48 34 44 44 32 49Z' fill='#ffdf8a' opacity='.85'/><path d='M32 34 C29 28 30 22 32 15 C34 22 35 28 32 34Z' fill='#ffb703'/><circle cx='32' cy='35' r='3.2' fill='#fff6d8'/></svg>";
+      var GATES = [
+        { key: "tinh_duyen", icon: "💗", label: "Tình Duyên", aspect: "tinh_duyen" },
+        { key: "su_nghiep", icon: "💼", label: "Công Danh", aspect: "su_nghiep" },
+        { key: "tai_chinh", icon: "💰", label: "Tài Lộc", aspect: "tai_chinh" },
+        { key: "suc_khoe", icon: "🕊️", label: "Bình An", aspect: "suc_khoe" },
+        { key: "hoc_hanh", icon: "📚", label: "Học Hành", aspect: "hoc_hanh" }
+      ];
+      var NPCS = [
+        { name: "Cô Tư", face: "👩" }, { name: "Chú Bảy", face: "👨" },
+        { name: "Bà Tám", face: "👵" }, { name: "Ông Chín", face: "👴" }
+      ];
+      var LANES = [15, 32.5, 50, 67.5, 85];
+      var XAM = null, POOLS = null;
+      var myGate = GATES[3];
+      var racers = [], racing = false, finishedCount = 0, rafId = null, lastTs = 0, gustTimer = 0, myResult = null;
+
+      var $ = function (id) { return document.getElementById(id); };
+      function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+      function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+      function capChip(cap) {
+        if (cap === "thuong") return '<span class="chip good">🌟 Quẻ tốt</span>';
+        if (cap === "trung") return '<span class="chip mid">Quẻ bình thường</span>';
+        return '<span class="chip low">Quẻ hơi chưa thuận</span>';
+      }
+      function capWord(cap) { return cap === "thuong" ? "quẻ tốt" : cap === "trung" ? "quẻ bình thường" : "quẻ hơi chưa thuận"; }
+      function feed(html) {
+        var li = document.createElement("li"); li.innerHTML = html;
+        var f = $("feed"); f.insertBefore(li, f.firstChild);
+      }
+      function bell() {
+        try {
+          var ctx = bell.ctx || (bell.ctx = new (window.AudioContext || window.webkitAudioContext)());
+          [1567, 2093].forEach(function (fr, i) {
+            var o = ctx.createOscillator(), g = ctx.createGain();
+            o.type = "sine"; o.frequency.value = fr;
+            g.gain.setValueAtTime(0.0001, ctx.currentTime + i * 0.18);
+            g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + i * 0.18 + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.18 + 1.1);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(ctx.currentTime + i * 0.18); o.stop(ctx.currentTime + i * 0.18 + 1.2);
+          });
+        } catch (e) {}
+      }
+
+      // gate picker
+      GATES.forEach(function (g) {
+        var b = document.createElement("button");
+        b.className = "gate" + (g.key === myGate.key ? " on" : "");
+        b.textContent = g.icon + " " + g.label;
+        b.onclick = function () {
+          myGate = g;
+          document.querySelectorAll(".gate").forEach(function (x) { x.classList.remove("on"); });
+          b.classList.add("on");
+        };
+        $("gates").appendChild(b);
+      });
+      // gate posts on the finish line
+      GATES.forEach(function (g, i) {
+        var d = document.createElement("div");
+        d.className = "gatepost"; d.id = "post-" + g.key;
+        d.style.top = (10 + i * 20) + "%";
+        d.textContent = g.icon + " " + g.label;
+        $("posts").appendChild(d);
+      });
+      $("nameIn").value = localStorage.getItem("pt_name") || "";
+
+      function makeRacer(name, gate, isMe, laneIdx) {
+        return { name: name, gate: gate, isMe: !!isMe, lane: laneIdx, p: 0, base: rnd(0.021, 0.028),
+                 phase: rnd(0, Math.PI * 2), freq: rnd(0.5, 0.9), boostUntil: 0, finished: false, rank: 0, que: null, el: null };
+      }
+      function renderRacer(r) {
+        var d = document.createElement("div");
+        d.className = "rlan" + (r.isMe ? " me" : "");
+        d.style.left = "5%"; d.style.top = LANES[r.lane] + "%";
+        d.innerHTML = LANTERN_SVG + '<span class="gatebadge">' + r.gate.icon + "</span>" +
+          '<span class="tag">' + esc(r.name) + "</span>";
+        $("lanes").appendChild(d);
+        r.el = d;
+      }
+      function placeAll() {
+        $("lanes").innerHTML = ""; racers = [];
+        var me = racers.length;
+        var mine = makeRacer($("nameIn").value.trim() || "Bạn", myGate, true, 2);
+        racers.push(mine);
+        var lanePool = [0, 1, 3, 4];
+        NPCS.forEach(function (n, i) {
+          racers.push(makeRacer(n.name, pick(GATES), false, lanePool[i]));
+        });
+        racers.forEach(renderRacer);
+        return mine;
+      }
+
+      $("joinBtn").onclick = function () {
+        if (!XAM) { $("joinStatus").textContent = "Đang tải bộ quẻ, chờ một chút rồi thử lại…"; return; }
+        localStorage.setItem("pt_name", $("nameIn").value.trim());
+        placeAll();
+        finishedCount = 0; myResult = null;
+        $("resultCard").style.display = "none"; $("myReward").innerHTML = "";
+        $("joinStatus").textContent = "Đèn của bạn đã xuống nước, ở làn giữa. Sẵn sàng đua!";
+        $("startBtn").disabled = false; $("resetBtn").disabled = true;
+        $("raceStatus").textContent = "5 đèn đã vào vị trí. Bấm Bắt đầu đua!";
+        feed("🪷 " + esc(racers[0].name) + " thả đèn, hướng về cổng " + myGate.icon + " " + esc(myGate.label) + ".");
+      };
+
+      function drawQue(rank, isLast) {
+        var pool;
+        if (rank === 1) pool = POOLS.thuong;
+        else if (isLast) pool = POOLS.trung.concat(POOLS.ha);
+        else pool = POOLS.thuong.concat(POOLS.trung);
+        return pick(pool);
+      }
+      function banner(txt) {
+        var b = $("banner"); b.textContent = txt; b.style.display = "block";
+        setTimeout(function () { b.style.display = "none"; }, 2600);
+      }
+      function finishRacer(r, now) {
+        r.finished = true; finishedCount++;
+        r.rank = finishedCount;
+        var isLast = finishedCount === racers.length;
+        r.que = drawQue(r.rank, isLast);
+        var post = $("post-" + r.gate.key); if (post) post.classList.add("lit");
+        feed("🏁 Đèn của <b>" + esc(r.name) + "</b> về đích thứ " + r.rank + " — cổng " + r.gate.icon + " " + esc(r.gate.label) +
+             " · rút được <b>quẻ số " + r.que.so_que + "</b> · " + capWord(r.que.cap) + ".");
+        if (r.isMe) { myResult = r; bell(); }
+        if (isLast) endRace();
+        else $("raceStatus").textContent = "Đã có " + finishedCount + "/5 đèn về đích…";
+      }
+      function endRace() {
+        racing = false; cancelAnimationFrame(rafId);
+        $("raceStatus").textContent = "Cuộc đua kết thúc! Xem phần thưởng ở mục 3 bên dưới.";
+        $("resetBtn").disabled = false;
+        renderResults();
+        feed("🎉 Tất cả đèn đã về đích. Phần thưởng quẻ chỉ chủ đèn mới mở xem được.");
+      }
+      function renderResults() {
+        var rows = racers.slice().sort(function (a, b) { return a.rank - b.rank; }).map(function (r) {
+          return "<tr><td><b>" + r.rank + "</b></td><td>" + (r.isMe ? "⭐ " : "") + esc(r.name) + "</td><td>" + r.gate.icon + " " + esc(r.gate.label) +
+            "</td><td>Quẻ số <b>" + r.que.so_que + "</b><br />" + capChip(r.que.cap) + "</td><td>" +
+            (r.isMe ? "👇 Mở ở thẻ bên dưới" : '<span class="lock">🔒 Chỉ chủ đèn mới xem được nội dung</span>') + "</td></tr>";
+        }).join("");
+        $("resBody").innerHTML = rows;
+        $("resultCard").style.display = "block";
+        if (myResult) {
+          var q = myResult.que, asp = q.cac_mat[myResult.gate.aspect] || q.cac_mat.tong_quan;
+          var tips = (asp.goi_y_hanh_dong || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+          $("myReward").innerHTML =
+            '<div class="reward"><h3>🎁 Phần thưởng của bạn — Quẻ số ' + q.so_que + ": " + esc(q.ten_que) + "</h3>" +
+            capChip(q.cap) + ' <span class="lock">Cổng ' + myResult.gate.icon + " " + esc(myResult.gate.label) + " · về đích thứ " + myResult.rank + "</span>" +
+            '<div class="lbl">Bài xăm</div><div class="tho">' + esc(q.tho) + "</div>" +
+            '<div class="lbl">Giải chung</div><p>' + esc(q.loi_giai_chung) + "</p>" +
+            '<div class="lbl">Riêng mặt ' + esc(myResult.gate.label) + "</div><p>" + esc(asp.nhin_nhan) + "</p><p><i>" + esc(asp.cau_dong_vien) + "</i></p>" +
+            (tips ? '<div class="lbl">Gợi ý hành động</div><ul>' + tips + "</ul>" : "") +
+            '<p class="lock" style="margin-top:12px">🔒 Nội dung này chỉ hiện cho bạn — người khác chỉ thấy số quẻ và hạng quẻ của bạn.</p></div>';
+        }
+      }
+      function step(ts) {
+        if (!racing) return;
+        var dt = Math.min(0.05, (ts - lastTs) / 1000 || 0.016); lastTs = ts;
+        var t = ts / 1000;
+        gustTimer -= dt;
+        if (gustTimer <= 0) {
+          gustTimer = rnd(6, 10);
+          var alive = racers.filter(function (r) { return !r.finished; });
+          if (alive.length > 1) {
+            var lucky = pick(alive); lucky.boostUntil = ts + 2200;
+            banner("🍃 Gió nổi lên — đèn của " + lucky.name + " được đẩy nhanh!");
+            feed("🍃 Gió nổi lên giữa ao, đèn của " + esc(lucky.name) + " bỗng vọt lên.");
+          }
+        }
+        racers.forEach(function (r) {
+          if (r.finished) return;
+          var wind = 1 + 0.38 * Math.sin(t * r.freq + r.phase);
+          var boost = ts < r.boostUntil ? 1.9 : 1;
+          r.p += r.base * wind * boost * dt;
+          if (r.p >= 1) { r.p = 1; finishRacer(r, ts); }
+          r.el.style.left = (5 + r.p * 85) + "%";
+        });
+        if (racing) rafId = requestAnimationFrame(step);
+      }
+      $("startBtn").onclick = function () {
+        if (!racers.length || racing) return;
+        racing = true; lastTs = performance.now(); gustTimer = 3.5;
+        $("startBtn").disabled = true; $("joinBtn").disabled = true;
+        $("raceStatus").textContent = "Đang đua… gió nước khó lường, cứ thong thả xem.";
+        feed("🏁 Cuộc đua bắt đầu! 5 đèn rời vạch xuất phát.");
+        rafId = requestAnimationFrame(step);
+      };
+      $("resetBtn").onclick = function () {
+        racing = false; cancelAnimationFrame(rafId);
+        racers = []; $("lanes").innerHTML = "";
+        document.querySelectorAll(".gatepost").forEach(function (p) { p.classList.remove("lit"); });
+        $("resultCard").style.display = "none";
+        $("startBtn").disabled = true; $("resetBtn").disabled = true; $("joinBtn").disabled = false;
+        $("joinStatus").textContent = ""; $("raceStatus").textContent = "Thả đèn của bạn rồi bấm Bắt đầu đua.";
+        feed("↺ Sẵn sàng cho lượt đua mới.");
+      };
+
+      fetch("xam.json").then(function (r) { return r.json(); }).then(function (d) {
+        XAM = d.ques || d;
+        POOLS = { thuong: [], trung: [], ha: [] };
+        XAM.forEach(function (q) { if (POOLS[q.cap]) POOLS[q.cap].push(q); });
+      }).catch(function () { $("joinStatus").textContent = "Không tải được bộ quẻ — kiểm tra mạng rồi tải lại trang."; });
+    </script>
+  </body>
+</html>
