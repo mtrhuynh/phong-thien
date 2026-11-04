@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.5.1 -->
+    <!-- build v0.6 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -43,6 +43,10 @@
       .rlan.me svg { filter: drop-shadow(0 0 12px rgba(255,210,90,.95)); }
       .rlan .gatebadge { position: absolute; top: -8px; right: -6px; font-size: 14px; background: rgba(10,16,26,.85); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; }
       .banner { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(10,16,26,.85); border: 1px solid #f2b64b; color: #ffe1a1; border-radius: 999px; padding: 6px 16px; font-size: 14px; display: none; white-space: nowrap; }
+      .mtracks { display: flex; flex-wrap: wrap; gap: 8px; }
+      .mtracks button { background: #16233c; color: #d7e3f2; border: 1px solid #2b4066; border-radius: 999px; padding: 7px 13px; font-size: 13.5px; cursor: pointer; }
+      .mtracks button:hover { border-color: #f2b64b; }
+      .mtracks button.playing { background: #7c4a12; border-color: #f2b64b; color: #ffe9bd; }
       .feed { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; }
       .feed li { padding: 6px 2px; border-bottom: 1px dashed #263650; font-size: 14px; color: #d7e3f2; }
       table.res { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -110,6 +114,16 @@
       <div class="card">
         <h2>📜 Diễn biến</h2>
         <ul class="feed" id="feed"></ul>
+      </div>
+
+      <div class="card">
+        <h2>🎵 Nhạc thiền — vừa xem đua vừa nghe</h2>
+        <div class="mtracks" id="musicGrid"></div>
+        <div class="row">
+          <button class="btn ghost" id="musicStop">⏹ Tắt nhạc</button>
+          <span class="status" id="musicStatus">Chọn một bản để mở nhạc nền.</span>
+        </div>
+        <audio id="raceAudio" loop preload="none"></audio>
       </div>
 
       <footer>Bản thử nghiệm — đua đèn là trò chơi riêng, không thuộc Phòng Thiền.<br />Quẻ dùng bộ Quan Âm Linh Xăm có sẵn; câu giải hiển thị đúng mặt chủ đề của cổng đích.</footer>
@@ -315,6 +329,31 @@
         $("startBtn").disabled = true; $("resetBtn").disabled = true; $("joinBtn").disabled = false;
         $("joinStatus").textContent = ""; $("raceStatus").textContent = "Thả đèn của bạn rồi bấm Bắt đầu đua.";
         feed("↺ Sẵn sàng cho lượt đua mới.");
+      };
+
+      var TRACKS = [
+        ["thien.mp3", "🎵 Nhạc thiền không lời"], ["mua.mp3", "🌧️ Mưa & sấm xa"],
+        ["chim.mp3", "🐦 Chim rừng buổi sớm"], ["karma.mp3", "🧘 Meditation Karma"],
+        ["yoga.mp3", "🧘‍♀️ Yoga thư giãn"], ["serenity.mp3", "🌿 Serenity"],
+        ["relax.mp3", "🍃 Relaxation"], ["healing.mp3", "💗 Healing Sleep"],
+        ["moonlight.mp3", "🌙 Moonlight"], ["canon.mp3", "🎹 Canon in D"]
+      ];
+      var audio = $("raceAudio"), curBtn = null, curFile = null;
+      TRACKS.forEach(function (t) {
+        var b = document.createElement("button");
+        b.textContent = t[1];
+        b.onclick = function () {
+          if (curFile === t[0] && !audio.paused) { audio.pause(); b.classList.remove("playing"); $("musicStatus").textContent = "Đã tạm dừng: " + t[1]; return; }
+          if (curBtn) curBtn.classList.remove("playing");
+          if (curFile !== t[0]) { audio.src = "music/" + t[0]; curFile = t[0]; }
+          audio.play(); curBtn = b; b.classList.add("playing");
+          $("musicStatus").textContent = "Đang phát (lặp): " + t[1];
+        };
+        $("musicGrid").appendChild(b);
+      });
+      $("musicStop").onclick = function () {
+        audio.pause(); if (curBtn) curBtn.classList.remove("playing");
+        $("musicStatus").textContent = "Đã tắt nhạc.";
       };
 
       fetch("xam.json").then(function (r) { return r.json(); }).then(function (d) {
