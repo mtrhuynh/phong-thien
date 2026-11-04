@@ -316,7 +316,8 @@
       };
 
       fetch("xam.json").then(function (r) { return r.json(); }).then(function (d) {
-        XAM = d.ques || d;
+        XAM = d.danh_sach_que || d.ques || d;
+        if (!Array.isArray(XAM)) throw new Error("bad xam format");
         POOLS = { thuong: [], trung: [], ha: [] };
         XAM.forEach(function (q) { if (POOLS[q.cap]) POOLS[q.cap].push(q); });
       }).catch(function () { $("joinStatus").textContent = "Không tải được bộ quẻ — kiểm tra mạng rồi tải lại trang."; });
