@@ -97,13 +97,14 @@
         <button class="act" id="roomCancel" type="button">Huỷ</button>
       </form>
 
-      <form class="rowform" id="seatForm" hidden>
-        <input id="nameInput" type="text" maxlength="20" placeholder="Tên của bạn (vd: Bé Na)" autocomplete="off" />
-        <button class="act primary" type="submit">Ngồi xuống</button>
-        <button class="act" id="cancelBtn" type="button">Huỷ</button>
-      </form>
+      <div class="wishrow" style="align-items:center">
+        <label for="nickInput" style="font-weight:600">Nickname của bạn:</label>
+        <input id="nickInput" type="text" maxlength="20" placeholder="vd: Bé Na, Mèo Lười…" autocomplete="off" />
+        <button class="act primary" id="nickSave" type="button">Lưu nickname</button>
+        <span class="status" id="nickStatus"></span>
+      </div>
 
-      <p class="hint">Chạm vào một đệm trống trong ảnh miếu để ngồi thiền cùng mọi người. Đang ngồi thì chạm vào chính mình hoặc nút "Đứng dậy" để rời đệm. Đóng trang là tự rời phòng.</p>
+      <p class="hint">Đặt nickname trước, rồi chạm vào một đệm trống trong ảnh miếu để ngồi thiền cùng mọi người — thẻ tên dưới nhân vật chính là nickname của bạn. Đang ngồi thì chạm vào chính mình hoặc nút "Đứng dậy" để rời đệm. Đóng trang là tự rời phòng.</p>
 
       <h2 class="sec">🪷 Thả đèn hoa đăng</h2>
       <p class="sub">Viết điều ước rồi thả đèn xuống ao sen — đèn của bạn sẽ hiện trên ao của tất cả mọi người trong phòng.</p>
@@ -158,7 +159,7 @@
 
         var myId = sessionStorage.getItem("pt_id");
         if (!myId) { myId = "khach-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8); sessionStorage.setItem("pt_id", myId); }
-        var myState = { name: null, spot: null, roomName: null, nameAt: 0 };
+        var myState = { name: null, spot: null, roomName: null, nameAt: 0, lanterns: [] };
         try { myState.name = localStorage.getItem("pt_name") || null; } catch (e) {}
         var pickSpot = -1;
 
@@ -221,6 +222,15 @@
           $("standBtn").hidden = myState.spot === null;
           if (myState.spot !== null) $("status").textContent = "Bạn đang ngồi ở đệm " + (myState.spot + 1) + " · Phòng có " + count + " người đang ngồi.";
           else $("status").textContent = count ? "Phòng có " + count + " người đang ngồi · Chọn một đệm trống để ngồi cùng." : "Phòng đang vắng · Chọn một đệm để ngồi đầu tiên.";
+          var seenLan = {};
+          $("pondLayer").innerHTML = "";
+          entries().forEach(function (e) {
+            (e.p.lanterns || []).forEach(function (L) {
+              if (Date.now() - L.ts > 10 * 60 * 1000 || seenLan[L.id]) return;
+              seenLan[L.id] = 1;
+              renderLantern(L);
+            });
+          });
           var rn = currentRoomName();
           $("roomLine").textContent = rn ? "🪷 " + rn : (room !== "mieu-ba" ? "Phòng: " + room + " — ngồi thiền cùng nhau, mỗi người một đệm." : "Miếu Bà — ngồi thiền cùng nhau, mỗi người một đệm.");
         }
@@ -228,14 +238,12 @@
         function askName(idx) {
           pickSpot = idx;
           if (myState.name) { sit(idx, myState.name); return; }
-          $("seatForm").hidden = false;
-          $("nameInput").focus();
+          $("nickStatus").textContent = "Đặt nickname trước rồi mới ngồi được nha.";
+          $("nickInput").focus();
+          $("nickInput").scrollIntoView({ behavior: "smooth", block: "center" });
         }
         function sit(idx, name) {
-          name = (name || "").trim().slice(0, 20) || "Khách";
-          try { localStorage.setItem("pt_name", name); } catch (e) {}
-          myState.name = name; myState.spot = idx;
-          $("seatForm").hidden = true;
+          myState.spot = idx;
           trackState();
           feed("🧘 <b>" + esc(name) + "</b> vừa ngồi xuống đệm " + (idx + 1) + ".");
         }
@@ -246,9 +254,17 @@
           if (was !== null && was !== undefined) feed("🧘 <b>" + esc(myName()) + "</b> vừa đứng dậy.");
         }
 
-        $("seatForm").addEventListener("submit", function (ev) { ev.preventDefault(); if (pickSpot >= 0) sit(pickSpot, $("nameInput").value); pickSpot = -1; });
-        $("cancelBtn").addEventListener("click", function () { pickSpot = -1; $("seatForm").hidden = true; });
         $("standBtn").addEventListener("click", stand);
+        $("nickInput").value = myState.name || "";
+        $("nickSave").addEventListener("click", function () {
+          var v = $("nickInput").value.trim().slice(0, 20);
+          if (!v) { $("nickStatus").textContent = "Nickname đang trống."; return; }
+          myState.name = v;
+          try { localStorage.setItem("pt_name", v); } catch (e) {}
+          $("nickStatus").textContent = "Đã lưu nickname: " + v;
+          trackState();
+          if (pickSpot >= 0) { var sp = pickSpot; pickSpot = -1; sit(sp, v); }
+        });
         $("roomNameBtn").addEventListener("click", function () { $("roomForm").hidden = !$("roomForm").hidden; if (!$("roomForm").hidden) $("roomNameInput").focus(); });
         $("roomCancel").addEventListener("click", function () { $("roomForm").hidden = true; });
         $("roomForm").addEventListener("submit", function (ev) {
@@ -286,17 +302,27 @@
           layer.appendChild(el);
           setTimeout(function () { el.remove(); }, 10 * 60 * 1000);
         }
+        var seenFeedLan = {};
         channel.on("broadcast", { event: "lantern" }, function (msg) {
-          renderLantern(msg.payload);
-          feed("🪷 <b>" + esc(msg.payload.name) + "</b> thả đèn hoa đăng" + (msg.payload.wish ? ": “" + esc(msg.payload.wish) + "”" : "."));
+          var p = msg.payload;
+          if (!p || seenFeedLan[p.id]) return;
+          seenFeedLan[p.id] = 1;
+          feed("🪷 <b>" + esc(p.name) + "</b> thả đèn hoa đăng" + (p.wish ? ": “" + esc(p.wish) + "”" : "."));
         });
         $("lanternBtn").addEventListener("click", function () {
+          var now = Date.now();
           var p = {
-            name: myName(), wish: $("wishInput").value.trim().slice(0, 60), ts: Date.now(),
-            left: 4 + Math.random() * 38, bottom: 14 + Math.random() * 56,
+            id: myId + "-" + now, name: myName(), wish: $("wishInput").value.trim().slice(0, 60), ts: now,
+            left: Math.round((4 + Math.random() * 38) * 10) / 10, bottom: Math.round(14 + Math.random() * 56),
             drift: Math.round(90 + Math.random() * 150), dur: Math.round(9 + Math.random() * 7)
           };
           $("wishInput").value = "";
+          myState.lanterns = (myState.lanterns || []).filter(function (L) { return now - L.ts <= 10 * 60 * 1000; });
+          myState.lanterns.push(p);
+          if (myState.lanterns.length > 3) myState.lanterns = myState.lanterns.slice(-3);
+          seenFeedLan[p.id] = 1;
+          feed("🪷 <b>" + esc(p.name) + "</b> thả đèn hoa đăng" + (p.wish ? ": “" + esc(p.wish) + "”" : "."));
+          trackState();
           channel.send({ type: "broadcast", event: "lantern", payload: p });
         });
 
@@ -342,7 +368,7 @@
         channel.on("presence", { event: "sync" }, render);
         channel.subscribe(function (status) {
           if (status === "SUBSCRIBED") render();
-          else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") $("status").textContent = "Mất kết nối phòng — tải lại trang để vào lại.";
+          else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") $("status").textContent = "Đang nối lại phòng…";
         });
         window.addEventListener("beforeunload", function () { try { channel.untrack(); } catch (e) {} });
       })();
