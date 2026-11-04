@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.3.2 -->
+    <!-- build v0.4 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -32,7 +32,7 @@
       .status { color: #ffdf8a; font-size: 14px; min-height: 20px; }
       .scene { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid #263650; }
       .scene > img { display: block; width: 100%; height: auto; }
-      .finish { position: absolute; left: 90%; top: 4%; bottom: 4%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
+      .finish { position: absolute; left: 90%; top: 44%; bottom: 3%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
       .finish span { position: absolute; top: 2px; left: 6px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
       .gatepost { position: absolute; left: 91.2%; transform: translateY(-50%); font-size: 11px; background: rgba(10,16,26,.72); border: 1px solid #4a3a16; color: #ffe1a1; border-radius: 999px; padding: 2px 8px; white-space: nowrap; opacity: .55; }
       .gatepost.lit { opacity: 1; border-color: #ffd66e; box-shadow: 0 0 12px rgba(255,200,80,.65); color: #fff0cd; }
@@ -129,7 +129,8 @@
         { name: "Cô Tư", face: "👩" }, { name: "Chú Bảy", face: "👨" },
         { name: "Bà Tám", face: "👵" }, { name: "Ông Chín", face: "👴" }
       ];
-      var LANES = [15, 32.5, 50, 67.5, 85];
+      var LANES = [48, 59, 70, 80, 90];
+      var SCALES = [0.78, 0.9, 1.0, 1.1, 1.2];
       var XAM = null, POOLS = null;
       var myGate = GATES[3];
       var racers = [], racing = false, finishedCount = 0, rafId = null, lastTs = 0, gustTimer = 0, myResult = null;
@@ -179,7 +180,7 @@
       GATES.forEach(function (g, i) {
         var d = document.createElement("div");
         d.className = "gatepost"; d.id = "post-" + g.key;
-        d.style.top = (10 + i * 20) + "%";
+        d.style.top = [49, 60.5, 72, 83, 93][i] + "%";
         d.textContent = g.icon + " " + g.label;
         $("posts").appendChild(d);
       });
@@ -192,7 +193,7 @@
       function renderRacer(r) {
         var d = document.createElement("div");
         d.className = "rlan" + (r.isMe ? " me" : "");
-        d.style.left = "5%"; d.style.top = LANES[r.lane] + "%";
+        d.style.left = "5%"; d.style.top = LANES[r.lane] + "%"; d.style.width = (54 * SCALES[r.lane]) + "px";
         d.innerHTML = LANTERN_SVG + '<span class="gatebadge">' + r.gate.icon + "</span>" +
           '<span class="tag">' + esc(r.name) + "</span>";
         $("lanes").appendChild(d);
