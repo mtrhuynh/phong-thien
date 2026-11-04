@@ -1,0 +1,1 @@
+﻿window.PHONG_THIEN_CONFIG = { supabaseUrl: 'https://natylisofhdxklyjvbbb.supabase.co', supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hdHlsaXNvZmhkeGtseWp2YmJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDA2NjksImV4cCI6MjA5NDU3NjY2OX0.U0bXBPNvRy3owXYHdbVnwoKl6Tp05WU87NAoUU-UFis' };
