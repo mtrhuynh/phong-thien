@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.9 -->
+    <!-- build v0.10 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -35,8 +35,7 @@
       .stage > img { display: block; width: 100%; height: auto; }
       .finish { position: absolute; left: 90%; top: 44%; bottom: 3%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
       .finish span { position: absolute; top: 2px; left: 6px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
-      .gatepost { position: absolute; left: 91.2%; transform: translateY(-50%); font-size: 11px; background: rgba(10,16,26,.72); border: 1px solid #4a3a16; color: #ffe1a1; border-radius: 999px; padding: 2px 8px; white-space: nowrap; opacity: .55; }
-      .gatepost.lit { opacity: 1; border-color: #ffd66e; box-shadow: 0 0 12px rgba(255,200,80,.65); color: #fff0cd; }
+      .finishmark { position: absolute; left: 90.7%; transform: translateY(-50%); font-size: 11.5px; font-weight: 700; background: rgba(124,74,18,.94); border: 1px solid #ffd66e; color: #fff0cd; border-radius: 999px; padding: 2px 9px; white-space: nowrap; box-shadow: 0 0 12px rgba(255,200,80,.7); z-index: 5; }
       .lanes { position: absolute; inset: 0; }
       .rlan { position: absolute; width: 54px; transform: translate(-50%,-50%); text-align: center; transition: none; }
       .rlan svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 4px 10px rgba(255,170,40,.35)); }
@@ -48,6 +47,7 @@
       .frow input { flex: 1; margin: 0; }
       .frow select { background: #16233c; color: #d7e3f2; border: 1px solid #2b4066; border-radius: 10px; padding: 9px 8px; font-size: 14px; }
       .frow .fdel { padding: 7px 11px; }
+      .music-ico { display: inline-block; background: #f2b64b; border-radius: 50%; padding: 2px 8px 4px; margin-right: 8px; box-shadow: 0 0 16px rgba(242,182,75,.85); }
       .mtracks { display: flex; flex-wrap: wrap; gap: 8px; }
       .mtracks button { background: #16233c; color: #d7e3f2; border: 1px solid #2b4066; border-radius: 999px; padding: 7px 13px; font-size: 13.5px; cursor: pointer; }
       .mtracks button:hover { border-color: #f2b64b; }
@@ -76,7 +76,7 @@
         .tablewrap { overflow-x: auto; }
         table.res { font-size: 13px; }
         .frow select { max-width: 44%; }
-        .gatepost { font-size: 10px; padding: 2px 6px; }
+        .finishmark { font-size: 10px; padding: 2px 6px; }
       }
     </style>
   </head>
@@ -108,7 +108,7 @@
             <span class="status" id="fillInfo"></span>
           </div>
         </div>
-        <p class="hint">Luật ghép đội: đường đua luôn đủ 5 đèn — chị thêm bao nhiêu bạn thì số đèn ảo của chùa (Cô Tư, Chú Bảy, Bà Tám, Ông Chín) giảm đi bấy nhiêu; đủ 5 người thật thì không còn đèn ảo. Mỗi người bạn tự chọn cổng của mình, và xem được toàn văn quẻ của chính mình ở mục kết quả. Luật quẻ: đèn về <b>nhất</b> chắc chắn rút được quẻ tốt; đèn về <b>cuối</b> quẻ chỉ hơi chưa thuận, không bao giờ là quẻ nặng. Nội dung quẻ chỉ hiện cho chủ đèn — người ngoài chỉ thấy số quẻ và biết quẻ tốt hay chưa thuận.</p>
+        <p class="hint">Luật quẻ: đèn về <b>nhất</b> chắc chắn rút được quẻ tốt; đèn về <b>cuối</b> quẻ chỉ hơi chưa thuận, không bao giờ là quẻ nặng. Nội dung quẻ chỉ hiện cho chủ đèn — người ngoài chỉ thấy số quẻ và biết quẻ tốt hay chưa thuận.</p>
       </div>
 
       <div class="card">
@@ -141,7 +141,7 @@
       </div>
 
       <div class="card">
-        <h2>🎵 Nhạc thiền &amp; cổ vũ — vừa xem đua vừa nghe</h2>
+        <h2><span class="music-ico">🎵</span>Nhạc thiền &amp; cổ vũ</h2>
         <div class="row">
           <button class="btn" id="cheerBtn">👏 Vỗ tay reo hò cổ vũ!</button>
           <span class="status">Tiếng cổ vũ cũng tự vang lên khi đua bắt đầu và khi có đèn về nhất.</span>
@@ -242,14 +242,6 @@
         };
         $("gates").appendChild(b);
       });
-      // gate posts on the finish line
-      GATES.forEach(function (g, i) {
-        var d = document.createElement("div");
-        d.className = "gatepost"; d.id = "post-" + g.key;
-        d.style.top = [49, 60.5, 72, 83, 93][i] + "%";
-        d.textContent = g.icon + " " + g.label;
-        $("posts").appendChild(d);
-      });
       $("nameIn").value = localStorage.getItem("pt_name") || "";
 
       function makeRacer(name, gate, isMe, laneIdx, isReal) {
@@ -298,7 +290,7 @@
         return out;
       }
       function placeAll() {
-        $("lanes").innerHTML = ""; racers = [];
+        $("lanes").innerHTML = ""; $("posts").innerHTML = ""; racers = [];
         var laneOrder = [2, 0, 4, 1, 3];
         var mine = makeRacer($("nameIn").value.trim() || "Bạn", myGate, true, laneOrder[0], true);
         racers.push(mine);
@@ -322,7 +314,7 @@
         finishedCount = 0; myResult = null;
         $("resultCard").style.display = "none"; $("myReward").innerHTML = "";
         var nReal = racers.filter(function (r) { return r.real; }).length;
-        $("joinStatus").textContent = "Đã thả 5 đèn: " + nReal + " người thật" + (5 - nReal > 0 ? " + " + (5 - nReal) + " đèn của chùa" : "") + ". Sẵn sàng đua!";
+        $("joinStatus").textContent = "Đã thả 5 đèn: " + nReal + " người thật" + (5 - nReal > 0 ? " + " + (5 - nReal) + " đèn của chùa" : "") + ".";
         $("startBtn").disabled = false; $("resetBtn").disabled = true;
         $("raceStatus").textContent = "5 đèn đã vào vị trí. Bấm Bắt đầu đua!";
         feed("🪷 " + esc(racers[0].name) + " thả đèn, hướng về cổng " + myGate.icon + " " + esc(myGate.label) + ".");
@@ -347,7 +339,11 @@
         r.rank = finishedCount;
         var isLast = finishedCount === racers.length;
         r.que = drawQue(r.rank, isLast);
-        var post = $("post-" + r.gate.key); if (post) post.classList.add("lit");
+        var mark = document.createElement("div");
+        mark.className = "finishmark";
+        mark.style.top = r.el.style.top;
+        mark.textContent = r.gate.icon + " " + r.gate.label;
+        $("posts").appendChild(mark);
         feed("🏁 Đèn của <b>" + esc(r.name) + "</b> về đích thứ " + r.rank + " — cổng " + r.gate.icon + " " + esc(r.gate.label) +
              " · rút được <b>quẻ số " + r.que.so_que + "</b> · " + capWord(r.que.cap) + ".");
         if (r.rank === 1) cheer();
@@ -419,8 +415,7 @@
       };
       $("resetBtn").onclick = function () {
         racing = false; cancelAnimationFrame(rafId);
-        racers = []; $("lanes").innerHTML = ""; camX = 0; applyCam();
-        document.querySelectorAll(".gatepost").forEach(function (p) { p.classList.remove("lit"); });
+        racers = []; $("lanes").innerHTML = ""; $("posts").innerHTML = ""; camX = 0; applyCam();
         $("resultCard").style.display = "none";
         $("startBtn").disabled = true; $("resetBtn").disabled = true; $("joinBtn").disabled = false;
         $("joinStatus").textContent = ""; $("raceStatus").textContent = "Thả đèn của bạn rồi bấm Bắt đầu đua.";
