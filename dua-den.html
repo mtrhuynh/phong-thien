@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>Đua Đèn Hoa Đăng — 🏮</title>
-    <!-- build v0.8 -->
+    <!-- build v0.9 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Noto+Serif:wght@600;800&display=swap" rel="stylesheet" />
     <style>
@@ -31,7 +31,8 @@
       .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
       .status { color: #ffdf8a; font-size: 14px; min-height: 20px; }
       .scene { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid #263650; }
-      .scene > img { display: block; width: 100%; height: auto; }
+      .stage { position: relative; width: 100%; }
+      .stage > img { display: block; width: 100%; height: auto; }
       .finish { position: absolute; left: 90%; top: 44%; bottom: 3%; width: 0; border-left: 3px dashed rgba(255, 214, 110, .95); filter: drop-shadow(0 0 6px rgba(255,190,60,.8)); }
       .finish span { position: absolute; top: 2px; left: 6px; color: #ffd66e; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-shadow: 0 1px 4px #000; white-space: nowrap; }
       .gatepost { position: absolute; left: 91.2%; transform: translateY(-50%); font-size: 11px; background: rgba(10,16,26,.72); border: 1px solid #4a3a16; color: #ffe1a1; border-radius: 999px; padding: 2px 8px; white-space: nowrap; opacity: .55; }
@@ -68,6 +69,15 @@
       .reward p { line-height: 1.65; margin: 6px 0 0; }
       .hint { color: #8fa5bd; font-size: 13px; line-height: 1.6; }
       footer { text-align: center; color: #647d99; font-size: 12px; margin-top: 26px; line-height: 1.7; }
+      @media (max-width: 700px) {
+        header h1 { font-size: 26px; }
+        .card { padding: 12px; }
+        .stage { width: 260%; }
+        .tablewrap { overflow-x: auto; }
+        table.res { font-size: 13px; }
+        .frow select { max-width: 44%; }
+        .gatepost { font-size: 10px; padding: 2px 6px; }
+      }
     </style>
   </head>
   <body>
@@ -103,11 +113,13 @@
 
       <div class="card">
         <h2>2 · Cuộc đua</h2>
-        <div class="scene">
-          <img src="pond.webp" alt="Ao hoa đăng" />
-          <div class="finish"><span>VẠCH ĐÍCH</span></div>
-          <div id="posts"></div>
-          <div class="lanes" id="lanes"></div>
+        <div class="scene" id="scene">
+          <div class="stage" id="stage">
+            <img src="pond.webp" alt="Ao hoa đăng" />
+            <div class="finish"><span>VẠCH ĐÍCH</span></div>
+            <div id="posts"></div>
+            <div class="lanes" id="lanes"></div>
+          </div>
           <div class="banner" id="banner"></div>
         </div>
         <div class="row">
@@ -119,7 +131,7 @@
 
       <div class="card" id="resultCard" style="display:none">
         <h2>3 · Kết quả &amp; phần thưởng</h2>
-        <table class="res"><thead><tr><th>Hạng</th><th>Đèn</th><th>Cổng</th><th>Quẻ rút được</th><th>Nội dung</th></tr></thead><tbody id="resBody"></tbody></table>
+        <div class="tablewrap"><table class="res"><thead><tr><th>Hạng</th><th>Đèn</th><th>Cổng</th><th>Quẻ rút được</th><th>Nội dung</th></tr></thead><tbody id="resBody"></tbody></table></div>
         <div id="myReward"></div>
       </div>
 
@@ -170,6 +182,29 @@
       function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
       function rnd(a, b) { return a + Math.random() * (b - a); }
       function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+      var camX = 0;
+      function applyCam() {
+        var st = $("stage"), sc = $("scene");
+        if (!st || !sc) return;
+        var maxShift = st.offsetWidth - sc.clientWidth;
+        if (maxShift <= 2) { st.style.transform = ""; camX = 0; return; }
+        camX = Math.max(0, Math.min(maxShift, camX));
+        st.style.transform = "translateX(" + (-camX) + "px)";
+      }
+      function updateCam(dt) {
+        var st = $("stage"), sc = $("scene");
+        if (!st || !sc || !racers.length) return;
+        var maxShift = st.offsetWidth - sc.clientWidth;
+        if (maxShift <= 2) return;
+        var lead = 0;
+        racers.forEach(function (r) { if (r.p > lead) lead = r.p; });
+        var leaderX = (5 + lead * 85) / 100 * st.offsetWidth;
+        var target = Math.max(0, Math.min(maxShift, leaderX - sc.clientWidth * 0.55));
+        camX += (target - camX) * Math.min(1, dt * 2.0);
+        if (Math.abs(target - camX) < 0.5) camX = target;
+        applyCam();
+      }
+      window.addEventListener("resize", applyCam);
       function capChip(cap) {
         if (cap === "thuong") return '<span class="chip good">🌟 Quẻ tốt</span>';
         if (cap === "trung") return '<span class="chip mid">Quẻ bình thường</span>';
@@ -275,6 +310,7 @@
           racers.push(makeRacer(NPCS[k].name, pick(GATES), false, laneOrder[racers.length], false));
         }
         racers.forEach(renderRacer);
+        camX = 0; applyCam();
         return mine;
       }
       updateFill();
@@ -369,6 +405,7 @@
           r.el.style.left = (5 + r.p * 85) + "%";
           r.el.style.top = (LANES[r.lane] + Math.sin(t * 1.4 + r.phase) * 0.35) + "%";
         });
+        updateCam(dt);
         if (racing) rafId = requestAnimationFrame(step);
       }
       $("startBtn").onclick = function () {
@@ -382,7 +419,7 @@
       };
       $("resetBtn").onclick = function () {
         racing = false; cancelAnimationFrame(rafId);
-        racers = []; $("lanes").innerHTML = "";
+        racers = []; $("lanes").innerHTML = ""; camX = 0; applyCam();
         document.querySelectorAll(".gatepost").forEach(function (p) { p.classList.remove("lit"); });
         $("resultCard").style.display = "none";
         $("startBtn").disabled = true; $("resetBtn").disabled = true; $("joinBtn").disabled = false;
