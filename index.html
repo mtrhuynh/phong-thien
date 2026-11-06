@@ -137,7 +137,7 @@
         <span class="status" id="incenseStatus">Nhang chưa đốt.</span>
       </div>
 
-      <h2 class="sec">🪷 Thả đèn hoa đăng</h2>
+      <h2 class="sec" id="tha-den">🪷 Thả đèn hoa đăng</h2>
       <p class="sub">Viết điều ước rồi thả đèn xuống ao sen — đèn của bạn sẽ hiện trên ao của tất cả mọi người trong phòng.</p>
       <div class="pond">
         <img src="./pond.webp" alt="Ao sen đêm trăng với đèn hoa đăng" />
@@ -206,6 +206,14 @@
         var params = new URLSearchParams(location.search);
         var room = (params.get("phong") || "mieu-ba").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24) || "mieu-ba";
         var paramName = (params.get("ten") || "").slice(0, 40);
+        if (params.get("den") === "1") {
+          setTimeout(function () {
+            var el = document.getElementById("tha-den");
+            if (el) el.scrollIntoView({ block: "start" });
+            var wi = document.getElementById("wishInput");
+            if (wi) wi.focus({ preventScroll: true });
+          }, 350);
+        }
 
         var myId = sessionStorage.getItem("pt_id");
         if (!myId) { myId = "khach-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8); sessionStorage.setItem("pt_id", myId); }
